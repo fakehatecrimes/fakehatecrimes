@@ -1,0 +1,33 @@
+- if @user_session
+  = form_for(@user_session) do |f|
+    - if @user_session.errors.any?
+      #error_explanation
+    .field
+      = f.label :email
+      %br
+      = f.text_field :email
+    .field
+      - if what == 'edit'
+        = f.label :new_password
+        %br
+      - else
+        = f.label :password
+        %br
+      = f.password_field :password
+    - unless what == 'new'
+      .field
+        = f.label "Password again"
+        %br
+        = f.password_field :password_confirmation
+      .field
+        %br
+        %img{src: word_link}/
+        %p
+          %label{for: "secret_word"} Enter the letters and numbers in the picture (case insensitive)
+          %br
+          = f.text_field :secret_word
+    .actions
+      %br
+      = f.submit CLICK_HERE
+      %br
+    %br

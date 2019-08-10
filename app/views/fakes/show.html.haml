@@ -1,0 +1,43 @@
+%br
+/ <haml_loud> absolute_path </haml_loud>
+%h3
+  Report #{@fake.id}.
+= form_for(@fake) do |f|
+  %table.fake
+    %tr
+      %th{align: "left"}
+        Articles/programs
+      %th{align: "left"}
+        Details
+
+    %tr
+      %td{align: "left", valign: "top"}
+
+        = raw Medium.thumbnail( @fake.media )
+        - @fake.media.each do |medium|
+          = check_box_tag( "media_id_#{ medium.id }", medium.id, true, disabled: true )
+          = raw( medium.short_description( can_change?( medium ) ) )
+          %br
+
+      %td{align: "left", valign: "top"}
+        - MediaType.all.each do |s|
+          - if @fake.get( :media_type_id ) == s.id
+            Type of hoax:
+            %b
+              = radio_button_tag( :media_type, s.name, checked: true, disabled: true, readonly: true)
+              = s.name
+            %br
+            %br
+        = @fake.date_yyyy_mm_dd
+        %br
+        %br
+        = @fake.get :city
+        = @fake.get :state
+        %br
+        %br
+        = @fake.get :reason
+%br
+= link_to 'Reports', "/reports"
+%br
+:javascript
+  document.getElementById( 'thumbnail' ).width = 400;

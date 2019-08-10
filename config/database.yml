@@ -1,0 +1,23 @@
+development:
+    adapter: mysql
+    database: fakehatecrimesdevelopment
+    username: root
+    password:
+    host: 127.0.0.1
+    encoding: utf8
+
+test:
+    adapter: mysql
+    database: fakehatecrimestest
+    username: root
+    password:
+    host: 127.0.0.1
+    encoding: utf8
+
+production:
+    adapter: mysql
+    database:
+    username:
+    password:
+    host: 127.0.0.1
+    encoding: utf8
