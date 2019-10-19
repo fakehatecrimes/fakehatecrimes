@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
     hash.each do |k, v|
       @medium[k.to_s] = v
     end
-    @medium.article = Article.find(hash["article_id"])
+    @medium.article_id = hash["article_id"]
 
     done = @medium.valid?
 

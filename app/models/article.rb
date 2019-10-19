@@ -11,4 +11,8 @@ class Article < ActiveRecord::Base
 
   has_many :media
 
+  def name
+    self.attributes["name"]
+  end
+
 end

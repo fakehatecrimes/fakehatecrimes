@@ -40,6 +40,10 @@ class Medium < ActiveRecord::Base
     get :body
   end
 
+  def article_name
+    Article.find( get :article_id ).name
+  end
+
   def valid_title
     self.title = attributes["title"]
     if self.title.blank?

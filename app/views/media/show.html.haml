@@ -12,7 +12,7 @@
           %p
             %b
               reports which reference this
-              #{Article.find( @medium.attributes["article_id"] ).name}
+              #{ @medium.article_name }
             %br
             - @medium.fakes.each do |report|
               = "#{ report.id }."
