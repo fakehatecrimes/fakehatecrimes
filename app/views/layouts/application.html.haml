@@ -10,6 +10,7 @@
     %title fakehatecrimes.org
     %link{href: "/stylesheets/calendar_date_select/silver.css", media: "all", rel: "stylesheet", type:"text/css"}/
     %link{href: "/stylesheets/pagination.css", media: "all", rel: "stylesheet", type:"text/css"}/
+    %link{ href: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity: "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"}/
     = stylesheet_link_tag "application", media: "all"
     = javascript_include_tag "application"
     = javascript_include_tag "prototype"
@@ -17,48 +18,50 @@
     = csrf_meta_tags
 
     %div.container-fluid
-      %table{width: "99%"}
-        %tr
-          %td{align: "left", bgcolor: "#ffffff"}
-            %font{color: "#050505"}
-              = raw( flash_format( flash[ :notice ] ) )
-              #nav
-                - if current_user
-                  = current_user.name
-                  |
-                  = link_to "Log out", :logout
-                  |
-                  %a{href: "/"} Reports
-                  |
-                  %a{href: "/search"} Search
-                  |
-                  %a{href: "/media"} Media
-                  |
-                  %a{href: "/graphs"} Graphs
-                  |
-                  %a{href: "/email"} Contact
-                  |
-                  = link_to "Help", edit_user_path(current_user.id)
-                - else
-                  = link_to "Log in", :login
-                  |
-                  %a{href: "/"} Reports
-                  |
-                  %a{href: "/search"} Search
-                  |
-                  %a{href: "/media"} Media
-                  |
-                  %a{href: "/graphs"} Graphs
-                  |
-                  = link_to "Join", new_user_path
-                  |
-                  %a{href: "/email"} Contact
-                  |
-                  = link_to "Help", '/password_resets/new'
-              %div
-                %br
-                = render partial: 'main/top'
+      %div.row
+        %div.col-xs-12
+          %table{width: "99%"}
+            %tr
+              %td{align: "left", bgcolor: "#ffffff"}
+                %font{color: "#050505"}
+                  = raw( flash_format( flash[ :notice ] ) )
+                  #nav
+                    - if current_user
+                      = current_user.name
+                      |
+                      = link_to "Log out", :logout
+                      |
+                      %a{href: "/"} Reports
+                      |
+                      %a{href: "/search"} Search
+                      |
+                      %a{href: "/media"} Media
+                      |
+                      %a{href: "/graphs"} Graphs
+                      |
+                      %a{href: "/email"} Contact
+                      |
+                      = link_to "Help", edit_user_path(current_user.id)
+                    - else
+                      = link_to "Log in", :login
+                      |
+                      %a{href: "/"} Reports
+                      |
+                      %a{href: "/search"} Search
+                      |
+                      %a{href: "/media"} Media
+                      |
+                      %a{href: "/graphs"} Graphs
+                      |
+                      = link_to "Join", new_user_path
+                      |
+                      %a{href: "/email"} Contact
+                      |
+                      = link_to "Help", '/password_resets/new'
+                  %div
+                    %br
+                    = render partial: 'main/top'
 
-              = yield
+          = yield
 
-    %link{ href: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity: "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"}/
+%script{src: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", integrity: "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM", crossorigin: "anonymous", type: "text/javascript"}

@@ -3,7 +3,7 @@
 %form#new_fake.new_fake{"accept-charset" => "UTF-8", action: "/reports", method: "post"}
   %div{style: "margin:0;padding:0;display:inline"}
     = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
-    %table.fake
+    %table.medium
       %tr
         %th
           Report details
