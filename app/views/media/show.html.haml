@@ -15,7 +15,6 @@
               #{ @medium.article_name }
             %br
             - @medium.fakes.each do |report|
-              = "#{ report.id }."
               #{raw report.user_link( can_change?( report ) )}
               %br
         %p

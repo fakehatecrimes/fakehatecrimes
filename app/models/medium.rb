@@ -106,21 +106,19 @@ class Medium < ActiveRecord::Base
     "<a href=\"#{ url }\">#{ link }</a>"
   end
 
-  def titlink( can_change )   # Remove HTML tags to avoid this happening:
-                              # '<a href="/media/70/edit"><a href="</a>
-                              # <a href="/reports/48/edit">edit</a>' which used to produce a link to
-                              # "/%3C/a%3E%20/%202012-12-02%20%3C/td%3E%20%20%20%20%3Ctd%3E%20%20%20%20%20%20%20%20%20%20%3Ca%20href="
+  def titlink( can_change, show_id=false )
     title = get :title
     str = ActionView::Base.full_sanitizer.sanitize( title )
     str = 'edit' if str.blank?
     str = str[ 0..SMALL ] + '...' if str.size > SMALL
-    url = "<a id=medium_#{ id }_ href=\"/media/#{ id }\">#{ str }</a>"
+    id_str = show_id ? id.to_s + ". " : ""
+    url = id_str + "<a id=medium_#{ id }_ href=\"/media/#{ id }\">#{ str }</a>"
     return url unless can_change
-    "<a id=medium_#{ id }_ href=\"/media/#{ id }/edit\">#{ str }</a>"
+    id_str + "<a id=medium_#{ id }_ href=\"/media/#{ id }/edit\">#{ str }</a>"
   end
 
-  def short_description( can_change=false )
-    res = titlink( can_change )
+  def short_description( can_change=false, show_id=true )
+    res = titlink( can_change, show_id )
     str = body.to_s
     str = str[ 0..SMALL ] if str.size > SMALL
     res += ' / ' + str unless str.blank?

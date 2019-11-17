@@ -95,8 +95,8 @@ def date_check
   end
 
   def user_link( can_change )
-    return '<a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '/edit">' + short_description + '</a>' if can_change
-    return '<a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '">' + short_description + '</a>'
+    return id.to_s + '. <a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '/edit">' + short_description + '</a>' if can_change
+    return id.to_s + '. <a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '">' + short_description + '</a>'
   end
 
 end
