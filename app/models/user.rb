@@ -103,8 +103,4 @@ class User < ActiveRecord::Base
     self.id
   end
 
-  def logged_out?
-    nil
-  end
-
 end
