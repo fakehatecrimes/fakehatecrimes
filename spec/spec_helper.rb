@@ -125,7 +125,7 @@ def create_report_with_one_old_and_one_new_medium
   check "media_id_#{ middle.id }"                       # Choose old medium
   article = Article.last
   choose "article_id_#{ article.id }"
-  title = FactoryBot.generate( :word ) 
+  title = FactoryBot.generate( :word )
   fill_in 'reason', :with => title.shuffle
   fill_in 'state', :with => 'FL'
   fill_in 'medium_title', :with => title
