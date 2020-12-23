@@ -58,17 +58,30 @@ class Grapher
     "#{ month[ 0 .. 2 ] } #{ month_year[ 2 .. 3 ] }" # 197908 -> 'Aug 79'
   end
 
-  def Grapher.all_year_months # All the recent months excluding the present one
-    array = []
+  def Grapher.number_of_hoaxes_in_month( fakes, year, month )
+    fakes.delete_if    { |fake| fake.date.nil? }
+    arr = fakes.select { |fake| fake.date.year == year && fake.date.month == month }
+    arr.size
+  end
+
+  def Grapher.all_year_months_in_which_more_than_two_hoaxes_happened( fakes )
+    fakes.delete_if { |fake| Grapher.number_of_hoaxes_in_month( fakes, fake.date.year, fake.date.month ) < 3 }
+    fakes.collect   { |fake| Grapher.year_month( fake.date.year, fake.date.month ) }
+  end
+
+  def Grapher.all_year_months # All the recent months excluding the present one in which > 2 hoax happened
     fakes = Fake.order( :date )
     fakes.delete_if { |fake| fake.date.nil? }
+    active_year_months = Grapher.all_year_months_in_which_more_than_two_hoaxes_happened fakes
+    array = []
     last = fakes.last
     min = fakes.first.date.year.to_i
     max = last.date.year.to_i
     (min..max).each do |year|
       (1..12).each do |month|
         break if year == max && month > last.date.month - 1
-        array << Grapher.year_month( year, month ) # August 1979 -> 197908
+        year_month = Grapher.year_month( year, month ) # August 1979 -> 197908
+        array << year_month if active_year_months.include? year_month
       end
     end
 
