@@ -1,0 +1,39 @@
+:javascript
+  function timeout() {
+    jQuery( window ).resize();
+  };
+  window.setTimeout( function() {
+    timeout();
+  }, 500 );
+= javascript_include_tag 'graphs'
+
+%table
+  %tr
+    %td
+      %table
+        %tr
+          %td
+            These graphs chart
+            %i reports
+            of fake hate crimes over time. The early reports (1979 thru 1994) are from
+            = link_to "Laird Wilcox's book 'Crying Wolf'", '/Crying-Wolf-by-Laird-Wilcox.pdf'
+            (PDF). From then on, most reports are from online
+            news sources. The data does not show the ratio of fake to real hate crimes.
+%br
+%div
+  %table{ id: 'charts_table', width: '95%' }
+    %tr
+      %td{ id: 'charts_td', style: "width: '85%', position: 'relative'" }
+        = high_chart( "years_chart", @years_chart )
+        = high_chart( "months_chart", @months_chart )
+
+%div.strongwatermark
+
+:javascript
+  function timeout() {
+    jQuery( '#highcharts-0.highcharts-container' ).resize();
+    jQuery( '#highcharts-1.highcharts-container' ).resize();
+  };
+  window.setTimeout( function() {
+    timeout();
+  }, 9000 );

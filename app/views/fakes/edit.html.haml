@@ -1,0 +1,57 @@
+%br
+%h3
+  Report #{@fake.id}. #{raw( @fake.user_name current_user )}
+- if can_change?( @fake )
+  = form_for(@fake) do |f|
+    = f.hidden_field :user_id
+    %table.medium
+      %tr
+        %th
+          What type of fake hate crime?
+        %th
+          Articles/programs
+      %tr
+        %td{align: "left", valign: "top"}
+          - MediaType.all.each do |s|
+            - if @fake.get( :media_type_id ) == s.id
+              = radio_button_tag( :media_type, s.id, checked: true)
+              = s.name
+            - else
+              = radio_button_tag( :media_type, s.id )
+              = s.name
+            %br
+          %br
+          Date #{INT_DATE_MSG}
+          %br
+          = f.text_field :date, value: @fake.date_yyyy_mm_dd
+          %br
+          City
+          %br
+          = f.text_field :city
+          %br
+          State
+          %br
+          = f.text_field :state
+          %br
+          Summary
+          %br
+          = f.text_area :reason, size: "25x8"
+        %td{align: "left", valign: "top"}
+          - mids = @fake.media.collect { |m| m.id }
+          - Medium.list( @fake ).each do |medium|
+            - check_it = (mids.include?( medium.id ))
+            - # Check it true if it's in the fake's list of media, otherwise nothing about checked at all - otherwise it checks it
+            - if check_it
+              = check_box_tag( "media_id_#{ medium.id }", medium.id, options: { checked: true } )
+            - else
+              = check_box_tag( "media_id_#{ medium.id }", medium.id )
+            &#160;#{raw( medium.short_description( can_change?( medium ) ) )}
+            %br
+    .actions
+      %br
+      %input#fake_submit{name: "commit", type: "submit", value: "#{HIT_THIS_BUTTON}"}
+      %br
+%br
+= link_to 'Reports', "/reports"
+%br
+%br

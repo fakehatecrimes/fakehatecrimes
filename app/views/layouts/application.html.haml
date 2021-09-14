@@ -1,0 +1,66 @@
+%html
+  %body
+    - require "#{ Rails.root }/lib/calendar_date_select/lib/calendar_date_select.rb"
+    - CalendarDateSelect.format = :american
+    %meta{content: "text/html;charset=UTF-8", "http-equiv" => "content-type"}/
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}/
+    %meta{content: "This is a project to create a database of hate crime hoaxes in the USA. It builds on the work of Laird Wilcox, 'Crying Wolf'", name: "description"}/
+    %meta{content: "fake hate crimes, hate crime hoaxes, Southern Poverty Law Center, SPLC, Anti-Defamation League, ADL", name: "keywords"}/
+    %title fakehatecrimes.org
+    %link{href: "/stylesheets/calendar_date_select/silver.css", media: "all", rel: "stylesheet", type:"text/css"}/
+    %link{href: "/stylesheets/pagination.css", media: "all", rel: "stylesheet", type:"text/css"}/
+    %link{ href: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity: "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"}/
+    = stylesheet_link_tag "application", media: "all"
+    = javascript_include_tag "application"
+    = javascript_include_tag "prototype"
+    %script{src: "/assets/calendar_date_select/public/javascripts/calendar_date_select/calendar_date_select.js", type:"text/javascript"}
+    = csrf_meta_tags
+
+    %div.container-fluid
+      %div.row
+        %div.col-xs-12
+          %table{width: "99%"}
+            %tr
+              %td{align: "left", bgcolor: "#ffffff"}
+                %font{color: "#050505"}
+                  = raw( flash_format( flash[ :notice ] ) )
+                  #nav
+                    - if current_user
+                      = current_user.name
+                      |
+                      = link_to "Log out", :logout
+                      |
+                      %a{href: "/"} Reports
+                      |
+                      %a{href: "/search"} Search
+                      |
+                      %a{href: "/media"} Media
+                      |
+                      %a{href: "/graphs"} Graphs
+                      |
+                      %a{href: "/email"} Contact
+                      |
+                      = link_to "Help", edit_user_path(current_user.id)
+                    - else
+                      = link_to "Log in", :login
+                      |
+                      %a{href: "/"} Reports
+                      |
+                      %a{href: "/search"} Search
+                      |
+                      %a{href: "/media"} Media
+                      |
+                      %a{href: "/graphs"} Graphs
+                      |
+                      = link_to "Join", new_user_path
+                      |
+                      %a{href: "/email"} Contact
+                      |
+                      = link_to "Help", '/password_resets/new'
+                  %div
+                    %br
+                    = render partial: 'main/top'
+
+          = yield
+
+    %script{src: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", integrity: "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM", crossorigin: "anonymous", type: "text/javascript"}

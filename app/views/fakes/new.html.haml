@@ -1,0 +1,64 @@
+%br
+%h3 New report - fill in as much detail as you can
+%form#new_fake.new_fake{"accept-charset" => "UTF-8", action: "/reports", method: "post"}
+  %div{style: "margin:0;padding:0;display:inline"}
+    = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
+    %table.medium
+      %tr
+        %th
+          Report details
+        %th{align: "right"}
+          Choose articles or programs
+        %th{align: "left"}
+          and/or enter a new article or program
+      %tr
+        %td{align: "left", valign: "top"}
+          %b What type of fake hate crime?
+          %br
+          - MediaType.all.reverse.each do |s|
+            - if @fake.get( :media_type_id )
+              - if @fake.get( :media_type_id ) == s.id
+                = radio_button_tag 'media_type_id', s.id, checked: true
+                = s.name
+              - else
+                = radio_button_tag 'media_type_id', s.id
+                = s.name
+            - else
+              - if s.name == SUSPECTED
+                = radio_button_tag 'media_type_id', s.id, checked: true
+                = s.name
+              - else
+                = radio_button_tag 'media_type_id', s.id
+                = s.name
+            %br
+          %br
+          Approximate date of hoax
+          #calendar
+            = calendar_date_select_tag "date", @fake.date.blank?? [] : @fake.date_mmm_d_yyyy, :year_range => 100.years.ago..0.years.ago
+          %br
+          City
+          %br
+          = text_field_tag :city, @fake.city
+          %br
+          State
+          %br
+          = text_field_tag :state, @fake.state
+          %br
+          Reason - why you think it's a hoax
+          %br
+          = text_area_tag :reason, @fake.reason, size: "17x9"
+        %td{align: "left", valign: "top"}
+          - Medium.list( nil ).each do |medium|
+            = check_box_tag "media_id_#{ medium.id }", medium.id
+            = medium.get :title
+            %br
+        %td{align: "left", valign: "top"}
+          = render partial: 'media/new', locals: {what: 'fake', medium: @medium}
+    .actions
+      %br
+      %input#fake_submit{name: "commit", type: "submit", value: "#{HIT_THIS_BUTTON}", data: { disable_with: SAVING_BE_PATIENT }}
+      %br
+%br
+= link_to 'Reports', "/reports"
+%br
+%br
