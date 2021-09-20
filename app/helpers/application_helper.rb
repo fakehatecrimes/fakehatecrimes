@@ -64,19 +64,6 @@ class Hash
     recurse true
   end
 
-  @@hash = { }
-  def squish( n = 0 )
-    @@hash = { } if n == 0
-    each do |k, v|
-      if v.is_a? Hash
-        v.squish( n + 1 )
-      else
-        @@hash[ k ] = v
-      end
-    end
-    @@hash
-  end
-
   def remove_unnecessary_keys! # Remove some of the bumf that gets into a controller's params hash
       delete :commit
       delete :controller

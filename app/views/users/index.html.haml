@@ -10,7 +10,7 @@
       %td= user.email
       %td= link_to 'edit user', edit_user_path(user)
       %td
-        - if current_user.admin? and (not user.admin?)
+        - if (not user.admin?)
           = button_to "delete user", { action: "destroy", id: user.id }, |
             confirm: "Are you sure?", method: :delete                    |
   %br

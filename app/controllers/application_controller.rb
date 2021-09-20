@@ -26,13 +26,29 @@ class ApplicationController < ActionController::Base
     args
   end
 
+# {"user_id"=>"1", "medium"=>{"title"=>"Another boring program", "name"=>"My program"} }
+# becomes
+# {"user_id"=>"1", "title"=>"Another boring program", "name"=>"My program"}
+  @hash = { }
+  def squish( hash, n = 0 )
+    @hash = { } if n == 0
+    hash.each do |k, v|
+      if v.is_a? Hash
+        hash[ k ] = squish( v, n + 1 )
+      else
+        @hash[ k ] = v
+      end
+    end
+    @hash
+  end
+
   def create_medium_if_possible(params)
 
     raise "create_medium_if_possible can only be called from the fakes controller or the media controller" unless
         self.class == FakesController or self.class == MediaController
 
     args = sanitize_params params
-    hash = args.squish
+    hash = squish args
     hash.remove_unnecessary_keys!
 
     errs = []
