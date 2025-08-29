@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo "In one of the bash shells with the prompt root@AHEXNUMBER:/app# enter rails server -b 0.0.0.0 -p 3000"
+echo "In one of the bash shells with the prompt root@AHEXNUMBER:/app# enter rails server -b 0.0.0.0 -p 3003"
 
 echo "🚀 Starting containers..."
 docker-compose up -d

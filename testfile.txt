@@ -1,37 +1,6 @@
-Dockerfile:
-FROM ruby:2.3.8
 
-RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
- && sed -i '/security.debian.org/d' /etc/apt/sources.list \
- && sed -i '/stretch-updates/d' /etc/apt/sources.list \
- && apt-get update -o Acquire::Check-Valid-Until=false -o Acquire::AllowInsecureRepositories=true \
- && apt-get install -y --allow-unauthenticated \
-        build-essential \
-        libmariadb-dev \
-        nodejs \
-        vim-tiny \
- && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update -o Acquire::Check-Valid-Until=false \
- && apt-get install -y --allow-unauthenticated debian-archive-keyring
-
-# Install bundler compatible with Rails 4.2
-RUN gem install bundler -v 1.17.3
-
-# Set working directory
-WORKDIR /app
-
-# Ensure Gemfile.lock exists to avoid Docker cache errors
-RUN if [ ! -f Gemfile.lock ]; then touch Gemfile.lock; fi
-
-# Copy Gemfiles and install gems
-COPY Gemfile Gemfile.lock ./
-RUN bundle _1.17.3_ install || true
-
-# Copy the rest of the app
-COPY . .
-
-docker-compose.yml:
+Here is my
+docker-compose.yml
 services:
   db:
     image: mariadb:10.1
@@ -52,6 +21,15 @@ services:
       - .:/app
     ports:
       - "3000:3000"
+      - "3001:3001" 
+      - "3002:3002"
+      - "3003:3003"
+      - "3004:3004"
+      - "3005:3005"
+      - "3006:3006"
+      - "3007:3007"
+      - "3008:3008"
+      - "3009:3009"
     depends_on:
       - db
     working_dir: /app
@@ -59,287 +37,65 @@ services:
 volumes:
   db-data:
 
-Gemfile:
-source 'https://rubygems.org'
 
-ruby '2.3.8'
+I run these scripts, in this order.
+But when I run docker-db-shell.sh to get a shell from which I can run mysql, I get
+   "ERROR 1049 (42000): Unknown database 'fakehatecrimesdevelopment'"
+I've got a shell /app in the Rails folder, but mysql doesn't exist in this shell.
+I know I got a myql shell before, but I can't remember what I have to do.
+Thanks for letting me know.    
 
-gem 'rails', '4.2.11.3'
-gem 'mysql2', '~> 0.4.10'
-gem 'puma', '~> 3.11'
-gem 'sass-rails', '~> 4.0'
-gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails', '~> 4.2.2'
-gem 'concurrent-ruby', '1.3.5'
-gem 'loofah', '~> 2.2.3'
-gem 'rails-html-sanitizer', '~> 1.0.4'
-
-group :development, :test do
-  gem 'sqlite3', '~> 1.3.6'
-  gem 'byebug'
-end
-
-group :production do
-  gem 'pg'
-end
-
-startdocker-compose.sh:
+docker-setup.sh
 #!/bin/bash
 set -e  # Exit immediately if a command fails
 
-# Ensure clean Gemfile.lock
-if [ -f Gemfile.lock ]; then
-    rm -f Gemfile.lock
-fi
-touch Gemfile.lock
-
-# Stop and remove old containers and volumes
+echo "🛠 Cleaning up old containers and volumes..."
 docker-compose down --volumes
 
-# Build images from scratch (no cache)
+# Ensure Gemfile.lock exists
+rm -f Gemfile.lock
+touch Gemfile.lock
+
+echo "📦 Building images from scratch..."
 docker-compose build --no-cache
 
-# Ensure Gemfile.lock exists inside container for bundle install caching
-docker-compose run --rm web bash -c "if [ ! -f Gemfile.lock ]; then touch Gemfile.lock; fi"
+# Ensure Gemfile.lock inside container
+docker-compose run --rm web bash -c "touch Gemfile.lock"
 
-# Install gems inside container using Bundler 1.17.3
+echo "💎 Installing gems with Bundler 1.17.3..."
 docker-compose run --rm web bundle _1.17.3_ install
 
-# Create the database inside container
+echo "🗄 Creating database..."
 docker-compose run --rm web rake db:create
 
-# Start a bash shell in the container for interactive debugging (optional)
-echo " "
-echo "You can now open a shell in the web container using:"
-echo "docker-compose exec web /bin/bash"
-echo "docker exec -it new_docker_built_rails_app-web-1 bash"
-echo "docker exec -it new_docker_built_rails_app-db-1 bash"
-echo "docker exec -i new_docker_built_rails_app-db-1 mysql -u root fakehatecrimesdevelopment < db/database.sql.txt"
+echo "✅ Setup complete. Run ./docker-start.sh to launch your app."
+
+docker-start.sh
+#!/bin/bash
+set -e
+echo "In one of the bash shells with the prompt root@AHEXNUMBER:/app# enter rails server -b 0.0.0.0 -p 3003"
+
+echo "🚀 Starting containers..."
+docker-compose up -d
+
+echo "🐚 Attaching to web container shell..."
+docker-compose exec web bash
+
+docker-db-shell.sh
+#!/bin/bash
+set -e
+
+docker exec -i fakehatecrimes-db-1  mysql -u root fakehatecrimesdevelopment < db/database.sql.txt
+docker exec -i fakehatecrimes-db-1 mysql -u root fakehatecrimestest < db/database.sql.txt
+echo "Running Docker shell from which you can run mysql..."
+docker-compose exec db bash
 
 
-# Start the services
-docker-compose up
 
-
-
-	OK, I give up. This code produces a page which, when you enter something in a text box, and hit the button, it shows the results of searching for it in a database. I enclose the relevant files.
-        But the URL you get after entering the word 'bass' and hitting the button says /search_button?text=bass&commit=+Then+click+here+   and I want it to be    /search?q=bass
-
-        Can you help?
-
-Rails 4.2.11.3
-Ruby 2.3.8
-media_controller:
-class MediaController < ApplicationController
-  before_action :require_user, except: [:search, :index, :show, :pic, :results]
-
-  # {"text"=>"azalea cooley", "commit"=>"Enter something to search for and click here"}
-  # {"text"=>"\"Azalea Cooley\"", "commit"=>"Enter something to search for and click here"}
-  # {"text"=>"'azalea cooley'", "commit"=>"Enter something to search for and click here"}
-  # results = Medium.find_by_sql( "select reason from fakes where   " +
-  #                                       reason like '%azalea%' or " +
-  #                                       reason like '%george%' union select title from media where "+
-  #                                       title like '%azalea%' or "  +
-  #                                       title like '%george%'" ) # is cool SQL, but it's not what we need
-  def results
-    @results = [ ]
-    text = params[:text]
-    unless text.blank?
-      text.strip!
-      quotes = ((text[ 0 ] == "'" or text[ 0 ] == '"') and (text[ -1 ] == "'" or text[ -1 ] == '"'))
-      text = text[ 1..-1 ] while (text[ 0  ] == "'" or text[ 0  ] == '"') # User could enter 'Fred Smith"
-      text = text[ 0..-2 ] while (text[ -1 ] == "'" or text[ -1 ] == '"') # Strip off the quotes
-      text.gsub!( /\W/, ' ' )
-      text.gsub!( /\s+/, ' ' )
-      text.gsub!( ' ', '%' ) unless quotes
-      text.downcase!
-
-      unless text.blank?
-        if text =~ Medium::YEAR_REG
-          text = "'%" + text + "%'" # Eg. "'%2010%'"
-          sql = "select id, url, title, body, authors, name from media where retrieval_date like #{text} or" +
-                                                                         " publication_date like #{text} order by id desc"
-          media = Medium.find_by_sql sql
-          sql = "select id, reason, city, state from fakes where date like #{text}" +
-                                        " order by id desc"
-          fakes = Fake.find_by_sql sql
-
-        else
-          text = "'%" + text + "%'" # Eg. "'%fred smith%'"
-          sql = "select id, url, title, body, authors, name from media where url like #{text} or title like #{text} or" +
-                                      " body like #{text} or authors like #{text} or name like #{text} order by id desc"
-          media = Medium.find_by_sql sql
-          sql = "select id, reason, city, state from fakes where reason like #{text} or city like #{text} or" +
-                                        " state like #{text} order by id desc"
-          fakes = Fake.find_by_sql sql
-        end
-
-        n = 0
-        while n < media.size or n < fakes.size
-          medium = (n < media.size ? media[ n ] : nil)
-          fake = (n < fakes.size ?   fakes[ n ] : nil)
-          unless medium.nil?
-            medium.body = medium.body[ 0..100 ] unless medium.body.blank? or medium.body.size < 101
-            medium.title = "show" if medium.title.blank? # Can't happen
-            @results << "<a href=\"/media/#{ medium.id }\">#{ medium.title }</a> #{medium.name} #{medium.authors} #{medium.body}"
-          end
-          unless fake.nil?
-            fake.reason = fake.reason[ 0..100 ] unless fake.reason.blank? or fake.reason.size < 101
-            fake.reason = "report #{fake.id}" if fake.reason.blank? # Can happen
-            @results << "<a href=\"/reports/#{ fake.id }\">#{ fake.reason }</a>"
-          end
-          n += 1
-        end
-
-      end
-    end
-
-    return @results 
-  end
-
-  def index
-    @media = Medium.all.reverse.paginate(page: params[:page])
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  def new
-    @medium = Medium.new if @medium.nil?
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  def create
-    args = sanitize_params params
-    @medium = create_medium_if_possible( args )
-    @medium.save! if @medium.valid?
-  end
-
-  def show
-    @medium = Medium.find(params[:id])
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
-  def edit
-    @medium = Medium.find(params[:id])
-  end
-
-  def pic
-    @medium = Medium.find(params[:id])
-  end
-
-  def update
-    args = sanitize_params params
-    @medium = Medium.find(media_params[:id])
-    @medium["title"] = args["medium"]["title"]
-    @medium["url"] = args["medium"]["url"]
-    @medium["name"] = args["medium"]["name"]
-    @medium["authors"] = args["medium"]["authors"]
-    @medium["body"] = args["medium"]["body"]
-    @medium["retrieval_date"] = args["medium"]["retrieval_date"]
-    @medium["publication_date"] = args["medium"]["publication_date"]
-    @medium.article = Article.find(media_params["article_id"])
-
-    respond_to do |format|
-      if @medium.save
-        ApplicationController.create_picture( @medium )
-        format.html { redirect_to '/media', notice: 'Updated' }
-      else
-        errs = 'Medium not saved: ' + flash_errs( @medium )
-        flash[:notice] = errs
-        format.html { render action: "edit" }
-      end
-    end
-  end
-
-  def destroy
-    Medium.delete_all("id = " + media_params["id"].to_s)
-
-    respond_to do |format|
-      format.html { redirect_to('/media', notice: '') }
-    end
-  end
-
-  def media_params
-    params.permit(:id, :user_id, :title, :name, :authors, :url, :body, :retrieval_date, :publication_date, :article_id)
-  end
-
-end
-
-routes.rb:
-Fakehatecrimes::Application.routes.draw do
-
-  get  'search' =>           'media#search'
-  get  'search' =>                'media#results'
-
-  resources :fakes, :media, :users, :user_sessions, :password_resets, :emailers, :searches 
-
-  root :to =>                'fakes#index'
-
-  get  'rules'       =>      'main#rules'
-  get  'lairdwilcox' =>      'main#lairdwilcox'
-  get  'graphs' =>           'graphs#index'
-
-  get  'media' =>            'media#index'
-  get  'medium/new' =>       'media#new'
-  get  'media/:id/edit' =>   'media#edit'
-  get  'media/:id/pic' =>    'media#pic'
-  post 'medium/create' =>    'media#create'
-
-  patch 'reports' =>         'fakes#index'
-  put  'reports' =>          'fakes#index'
-  get  'reports' =>          'fakes#index'
-  get  'reports/index' =>    'fakes#index'
-  post 'reports' =>          'fakes#index'
-  post 'reports/index' =>    'fakes#index'
-  post 'reports/create' =>   'fakes#create'
-  get  'reports/new' =>      'fakes#new'
-  post 'reports/new' =>      'fakes#new'
-  get  'reports/:id' =>      'fakes#show'
-  get  'reports/:id/edit' => 'fakes#edit'
-
-  get 'login' =>  'user_sessions#new',     :as => :login,  via: [:get, :post]
-  get 'logout' => 'user_sessions#destroy', :as => :logout, via: [:get, :post]
-
-  post 'password_resets/new' => "password_resets#new"
-   put 'password_resets/new' => "password_resets#new"
-  post 'sendmail'            => "emailers#sendmail"
-   get 'email'               => "emailers#index"
-
-  delete 'users/delete' =>   "users#destroy"
-    post 'users/delete' =>   "users#destroy"
-
-end
-
-/app/views/media/search.html.haml
-%form#search_media.search_media{"accept-charset" => "UTF-8", action: "/search_button", method: "get"}
-  %div{style: "margin:0;padding:0;display:inline"}
-    %br
-    %table.search
-      %tr
-        %td
-          %br
-          Enter text to search for. Put quotes around it, like this, "Azalea Cooley", if you mean
-          %br
-          "these words, in this order". Enter a year, eg. 2010, to search for the reports for that year:
-          %br
-          %br
-          = text_field_tag :text, '', maxlength: 40, size: 50
-          .actions
-            %br
-            %input#media_search{name: "commit", type: "submit", value: "#{SEARCH_BUTTON}"}
-            %br
-%div.strongwatermark
-
-app/views/media/results.html.haml:
-- @results.each do |result|
-  %br
-  = raw result 
-
+I'm still confused. I can get into a mysql docker shell, but it can't import my database.sql.txt. In a shell which can see that file, I can't run mysql.
+docker-compose.yml mentions my_app_development, but it's always been there, and yesterday, I could get into a mysql shell, create databases
+fakehatecrimesdevelopment and fakehatecrimestest, and import database.sql.txt into them. Now, after running all my docker scripts,
+including the new docker-db-import.sh, then when I run docker-db-shell.sh, it says 
+📥 Importing schema/data into databases...
+ERROR 1049 (42000): Unknown database 'fakehatecrimesdevelopment'
 
