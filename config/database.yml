@@ -1,0 +1,15 @@
+development:
+    adapter: mysql2
+    database: fakehatecrimesdevelopment
+    username: root
+    password:
+    host: db
+    encoding: utf8
+
+test:
+    adapter: mysql2
+    database: fakehatecrimestest
+    username: root
+    password:
+    host: db
+    encoding: utf8

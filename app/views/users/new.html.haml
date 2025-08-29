@@ -1,0 +1,4 @@
+%h3 Register
+= render partial: 'form', locals: {what: 'new'}
+- if current_user and current_user.admin?
+  = link_to 'Users', users_path

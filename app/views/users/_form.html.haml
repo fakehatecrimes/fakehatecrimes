@@ -1,0 +1,39 @@
+= form_for(@user) do |f|
+  - if @user.errors.any?
+    #error_explanation
+  .field
+    = f.label :email
+    %br
+    - if what == 'edit'
+      %b= @user.email
+    - else
+      = f.text_field :email
+  .field
+    %br
+    - if what == 'edit'
+      = f.label :old_password
+      %br
+      = f.password_field :old_password
+  .field
+    = f.label :new_password
+    %br
+    = f.label :password
+    %br
+    = f.password_field :password
+  .field
+    = f.label "Password again"
+    %br
+    = f.password_field :password_confirmation
+  - unless what == 'edit'
+    .field
+      %br
+      %img{src: word_link}/
+      %p
+        %label{for: "secret_word"} Enter the letters and numbers in the picture (case insensitive)
+        %br
+        = f.text_field :secret_word
+  .actions
+    %br
+    = f.submit HIT_THIS_BUTTON
+    %br
+  %br

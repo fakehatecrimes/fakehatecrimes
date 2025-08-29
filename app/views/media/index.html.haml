@@ -1,0 +1,30 @@
+%br
+%div
+  .flickr_pagination
+    = will_paginate @media, container: false
+
+= link_to "New #{ Article::DESCRIPTION.downcase }", new_medium_path
+
+%br
+%br
+#media-list
+  %div.table-responsive
+    %table.table
+      - @media.each do |medium|
+        - article = Article.find( medium.attributes["article_id"] )
+        - article_name = article.attributes["name"]
+        %tr{class: "#{cycle('media-list-line-odd', 'media-list-line-even')}"}
+          %td= raw( medium.user_name current_user )
+          %td= raw medium.titlink( current_user )
+          %td= raw( medium.urlink )
+          %td= article_name
+          %td= raw medium.either_date
+          %td
+            - if can_delete?( medium )
+              = button_to "delete medium", { action: "destroy", id: medium.id }, confirm: "Are you sure?", method: :delete                        |
+            - else
+              %br
+%br
+= link_to "New #{ Article::DESCRIPTION.downcase }", new_medium_path
+%br
+%br
