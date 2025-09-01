@@ -224,4 +224,35 @@ module ApplicationHelper
     "#{request.protocol}#{request.host}#{request.fullpath}"
   end
 
+  # Auto-link URLs in text
+  def auto_link_urls(text)
+    return text if text.blank?
+    
+    # URL regex pattern that matches http, https, www, and common TLDs
+    url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
+    
+    text.gsub(url_pattern) do |url|
+      # Ensure URL has protocol
+      full_url = url.start_with?('http') ? url : "http://#{url}"
+      
+      # Validate URL format
+      if full_url =~ /^https?:\/\/[^\s]+$/i
+        "<a href=\"#{full_url}\" target=\"_blank\" class=\"auto-link\">#{url}</a>"
+      else
+        url
+      end
+    end.html_safe
+  end
+
+  # Enhanced flash formatting with modern styling
+  def modern_flash_format(notice)
+    if notice.blank?
+      content_tag(:h1, class: 'site-title') do
+        link_to('fake hate crimes: a database of hate crime hoaxes in the usa', '/reports')
+      end
+    else
+      content_tag(:div, notice, class: 'flash-notice')
+    end
+  end
+
 end

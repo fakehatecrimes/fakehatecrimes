@@ -19,6 +19,8 @@ class Medium < ActiveRecord::Base
   validate :valid_dates
   validate :valid_url
   validate :valid_title
+  
+  before_save :process_urls_in_body
 
   def url
     get :url
@@ -264,6 +266,30 @@ class Medium < ActiveRecord::Base
 
   def Medium.picture_path( id )
     File.join( Rails.root, 'public', 'data', "#{ id }.png" )
+  end
+
+  private
+
+  def process_urls_in_body
+    body_text = get(:body)
+    return if body_text.blank?
+    
+    # URL regex pattern that matches http, https, www, and common TLDs
+    url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
+    
+    processed_body = body_text.gsub(url_pattern) do |url|
+      # Ensure URL has protocol
+      full_url = url.start_with?('http') ? url : "http://#{url}"
+      
+      # Validate URL format
+      if full_url =~ /^https?:\/\/[^\s]+$/i
+        "<a href=\"#{full_url}\" target=\"_blank\" class=\"auto-link\">#{url}</a>"
+      else
+        url
+      end
+    end
+    
+    set(:body, processed_body)
   end
 
 end

@@ -1,6 +1,6 @@
-%table
-  %tr
-    %td{width: "90%"}
+.row
+  .col-md-9
+    %p
       The purpose of this site is to compile a comprehensive database of the false reports of "hate crimes"
       committed (mostly) in the USA. It builds on the work of
       = succeed "," do
@@ -15,5 +15,5 @@
       %a{href: "https://rkeefe57.wordpress.com/"} Watching the Watchdogs
       and
       %a{href: "https://www.fakehatemap.com/"} Fake Hate Map.
-    %td
-      = raw Medium.random_thumbnail
+  .col-md-3.text-center
+    = raw Medium.random_thumbnail

@@ -17,6 +17,8 @@ class Fake < ActiveRecord::Base
   validates_presence_of :reason, message: "summary can't be blank"
   validates_presence_of :date, :state
   validate :date_check
+  
+  before_save :process_urls_in_reason
 
 # Get rid of hours, minutes and seconds when displaying dates - '1991-01-02' not '1991-01-02 00:00:00'
   def date_yyyy_mm_dd
@@ -97,6 +99,30 @@ def date_check
   def user_link( can_change )
     return id.to_s + '. <a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '/edit">' + short_description + '</a>' if can_change
     return id.to_s + '. <a' + ' id=report_' + id.to_s + '_ href="/reports/' + id.to_s + '">' + short_description + '</a>'
+  end
+
+  private
+
+  def process_urls_in_reason
+    reason_text = get(:reason)
+    return if reason_text.blank?
+    
+    # URL regex pattern that matches http, https, www, and common TLDs
+    url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
+    
+    processed_reason = reason_text.gsub(url_pattern) do |url|
+      # Ensure URL has protocol
+      full_url = url.start_with?('http') ? url : "http://#{url}"
+      
+      # Validate URL format
+      if full_url =~ /^https?:\/\/[^\s]+$/i
+        "<a href=\"#{full_url}\" target=\"_blank\" class=\"auto-link\">#{url}</a>"
+      else
+        url
+      end
+    end
+    
+    set(:reason, processed_reason)
   end
 
 end
