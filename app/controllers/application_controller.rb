@@ -29,7 +29,6 @@ class ApplicationController < ActionController::Base
 # {"user_id"=>"1", "medium"=>{"title"=>"Another boring program", "name"=>"My program"} }
 # becomes
 # {"user_id"=>"1", "title"=>"Another boring program", "name"=>"My program"}
-  @hash = { }
   def squish( hash, n = 0 )
     @hash = { } if n == 0
     hash.each do |k, v|
@@ -91,6 +90,12 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    # Save the medium if it's valid, but only for MediaController
+    # For FakesController, let the fakes controller decide whether to save it
+    if done && self.class == MediaController
+      @medium.save!
+    end
+
 #    ApplicationController.create_picture( @medium ) if done
 
     if self.class == MediaController # A medium can be saved from the new fake form as well as the new media form - only redirect for the latter case
@@ -99,7 +104,7 @@ class ApplicationController < ActionController::Base
           format.html { redirect_to '/media', notice: Article::DESCRIPTION + ' saved' }
         else
           flash_errs @medium
-          format.html { render action: "new" }
+          format.html { render template: 'media/new' }
         end
       end
     end

@@ -50,22 +50,37 @@ class FakesController < ApplicationController
   end
 
   def create(*args) # This can be passed a parameter, otherwise, it acts like a normal Rails create method
-    sanitized = sanitize_params args
-    arguments = sanitized[0].dup
-    arguments['medium']['user_id'] = arguments['user_id']
-    arguments['medium']['article_id'] = arguments['article_id']
-
-    @medium = create_medium_if_possible(arguments.dup)
-    @fake = find_or_initialize_report(arguments.dup) # The fakes/new form has an area for creating a new medium too
+    # When invoked as a Rails action, args will be empty; use params in that case
+    incoming = args.present? ? args.first : params
+    sanitized = sanitize_params incoming
 
     respond_to do |format|
+      # Build arguments hash expected by the rest of the flow
+      arguments = sanitized.dup
+      arguments['medium'] ||= {}
+      arguments['user_id'] ||= sanitized['user_id']
+      arguments['article_id'] ||= sanitized['article_id']
+      arguments['medium']['user_id'] = arguments['user_id']
+      arguments['medium']['article_id'] = arguments['article_id']
+
+      @medium = create_medium_if_possible(arguments.dup)
+      @fake = find_or_initialize_report(arguments.dup) # The fakes/new form has an area for creating a new medium too
+
       uid = arguments['user_id']
-      @fake.user = User.find uid
-      notice = try_to_save_report( arguments, @fake, @medium )
-      if notice =~ /Report saved/
-        format.html { redirect_to('/reports', notice: notice) }
+      if uid.blank?
+        format.html { redirect_to('/', notice: 'Invalid parameters') }
       else
-        format.html { render action: "new", notice: notice }
+        @fake.user = User.find uid
+        notice = try_to_save_report( arguments, @fake, @medium )
+        if notice =~ /Report saved/
+          format.html { redirect_to('/', notice: notice) }
+        else
+          # On errors, render new so the form shows validation messages
+          flash[:notice] = notice
+          @medium ||= Medium.new
+          @fake ||= Fake.new
+          format.html { render template: 'fakes/new' }
+        end
       end
     end
   end
@@ -93,7 +108,7 @@ class FakesController < ApplicationController
       if notice =~ /Report saved/
         format.html { redirect_to('/reports', notice: notice) }
       else
-        format.html { render action: "edit", notice: notice }
+        format.html { redirect_to("/reports/#{params[:id]}/edit", notice: notice) }
       end
     end
   end

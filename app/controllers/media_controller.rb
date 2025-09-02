@@ -89,7 +89,8 @@ class MediaController < ApplicationController
   def create
     args = sanitize_params params
     @medium = create_medium_if_possible( args )
-    @medium.save! if @medium.valid?
+    # The create_medium_if_possible method already handles saving and response
+    # No need to call @medium.save! here
   end
 
   def show
@@ -127,7 +128,7 @@ class MediaController < ApplicationController
       else
         errs = 'Medium not saved: ' + flash_errs( @medium )
         flash[:notice] = errs
-        format.html { render action: "edit" }
+        format.html { redirect_to "/media/#{params[:id]}/edit", notice: errs }
       end
     end
   end

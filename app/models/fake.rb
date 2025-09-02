@@ -122,7 +122,7 @@ def date_check
       end
     end
     
-    set(:reason, processed_reason)
+    self[:reason] = processed_reason
   end
 
 end

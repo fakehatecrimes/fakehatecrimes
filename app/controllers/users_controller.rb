@@ -38,7 +38,7 @@ class UsersController < ApplicationController
         format.html { redirect_to "/", notice: 'User was successfully created' }
       else
         flash_errs @user
-        format.html { render :new }
+        format.html { redirect_to "/users/new", notice: flash[:notice] }
       end
     end
   end
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
 
       else
         flash_errs @user
-        format.html { render action: "edit" }
+        format.html { redirect_to "/users/#{params[:id]}/edit", notice: flash[:notice] }
 
       end
     end

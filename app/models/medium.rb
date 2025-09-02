@@ -271,7 +271,7 @@ class Medium < ActiveRecord::Base
   private
 
   def process_urls_in_body
-    body_text = get(:body)
+    body_text = self.body  # Changed from get(:body)
     return if body_text.blank?
     
     # URL regex pattern that matches http, https, www, and common TLDs
@@ -289,7 +289,7 @@ class Medium < ActiveRecord::Base
       end
     end
     
-    set(:body, processed_body)
+    self.body = processed_body  # Changed from set(:body, processed_body)
   end
 
 end

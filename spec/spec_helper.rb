@@ -91,11 +91,11 @@ def create_medium_without_report
   visit "/media/new"
   choose 'article_id_1'
   title = FactoryBot.generate( :word )
-  fill_in 'medium_title', :with => title
-  fill_in 'medium_name', :with => title.shuffle
-  fill_in 'medium_authors', :with => 'Joe Sixpack'
-  fill_in 'medium_url', :with => 'http://' + title.gsub(" ", "") + ".com"
-  fill_in 'medium_body', :with => title.shuffle
+  fill_in 'medium[title]', :with => title
+  fill_in 'medium[name]', :with => title.shuffle
+  fill_in 'medium[authors]', :with => 'Joe Sixpack'
+  fill_in 'medium[url]', :with => 'http://' + title.gsub(" ", "") + ".com"
+  fill_in 'medium[body]', :with => title.shuffle
   fill_in 'publication_date', :with => '12/02/2525'
   fill_in 'retrieval_date', :with =>   '12/03/2525'
   click_button "Save print or online article, tv or radio program"
@@ -128,10 +128,10 @@ def create_report_with_one_old_and_one_new_medium
   title = FactoryBot.generate( :word )
   fill_in 'reason', :with => title.shuffle
   fill_in 'state', :with => 'FL'
-  fill_in 'medium_title', :with => title
-  fill_in 'medium_name', :with => title.shuffle
-  fill_in 'medium_body', :with => title.shuffle         # Add new medium
-  fill_in 'medium_authors', :with => "Joe Bloggs"
+  fill_in 'medium[title]', :with => title
+  fill_in 'medium[name]', :with => title.shuffle
+  fill_in 'medium[body]', :with => title.shuffle         # Add new medium
+  fill_in 'medium[authors]', :with => "Joe Bloggs"
   fill_in 'date', :with =>             '12/01/2018'
   fill_in 'publication_date', :with => '12/02/2018'
   fill_in 'retrieval_date', :with =>   '12/03/2018'

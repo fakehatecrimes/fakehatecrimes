@@ -1,7 +1,7 @@
 .card
   %h3 New Report - Fill in as much detail as you can
   
-  = form_for(@fake, html: { class: 'modern-form' }) do |f|
+  = form_for(@fake, url: '/reports/create', html: { class: 'modern-form' }) do |f|
     = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
     
     .row
