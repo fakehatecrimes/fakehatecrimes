@@ -3,9 +3,18 @@ class FakesController < ApplicationController
 
   def index
     @fakes = Fake.all.reverse.paginate(page: params[:page])
+    
+    # Debug logging
+    Rails.logger.debug "Index action params: #{params.inspect}"
+    Rails.logger.debug "Commit param: #{params[:commit]}"
+    Rails.logger.debug "HIT_THIS_BUTTON constant: #{HIT_THIS_BUTTON}"
+    Rails.logger.debug "Params commit matches HIT_THIS_BUTTON: #{params[:commit] == HIT_THIS_BUTTON}"
+    
     if params[:commit] == HIT_THIS_BUTTON # or params[:commit] == SAVE_MEDIUM_BUTTON
+      Rails.logger.debug "Calling create method"
       create params.dup
     else
+      Rails.logger.debug "Not calling create method"
       respond_to do |format|
         format.html
       end

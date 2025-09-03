@@ -1,8 +1,9 @@
 .card
   %h3 New Report - Fill in as much detail as you can
   
-  = form_for(@fake, url: '/reports/create', html: { class: 'modern-form' }) do |f|
+  %form{action: "/reports/create", method: "post"}
     = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
+    = hidden_field_tag('authenticity_token', form_authenticity_token)
     
     .row
       .col-md-6
@@ -31,8 +32,7 @@
         .form-group
           %label
             %strong Approximate date of hoax
-          #calendar
-            = calendar_date_select_tag "date", @fake.date.blank?? [] : @fake.date_mmm_d_yyyy, :year_range => 100.years.ago..0.years.ago
+          %input{type: "date", name: "date", class: 'form-control'}
         
         .form-group
           %label
@@ -62,7 +62,6 @@
         = render partial: 'media/new', locals: {what: 'fake', medium: @medium}
     
     .text-center.mt-20
-      = f.submit HIT_THIS_BUTTON, class: 'btn btn-success btn-lg', data: { disable_with: SAVING_BE_PATIENT }
-
-.text-center.mt-20
-  = link_to '← Back to Reports', "/reports", class: 'btn btn-primary'
+      %input{type: "submit", name: "commit", value: HIT_THIS_BUTTON, class: "btn btn-success btn-lg"}
+  .text-center.mt-20
+    = link_to '← Back to Reports', "/reports", class: 'btn btn-primary'

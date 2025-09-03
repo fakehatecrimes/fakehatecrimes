@@ -1,72 +1,65 @@
 %br
 %h3
   New #{Article::DESCRIPTION.downcase}
-= form_for(medium) do |f|
-  = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
-  %table.medium
-    %tr
-      %th
-      %th
-    %tr
-      %td{align: "left", valign: "top"}
-        %b Choose from the following
-        %br
-        - Article.all.each do |s|
-          - str = s.get "name"
-          - if str =~ /online/i
-            =radio_button_tag "article_id", s.get( :id ), true
-            =label_tag str
-          - else
-            =radio_button_tag "article_id", s.get( :id ), false
-            =label_tag str
-          %br
-        %br
-        %b Title or name of article or program
-        %br
-        = f.text_field :title, "value" => medium.get(:title), "max_length" => TEXT_FIELD_SIZE
-        %br
-        %br
-        Name of publication or program
-        %br
-        = f.text_field :name, "value" => medium.get(:name), "max_length" => TEXT_FIELD_SIZE
-        %br
-        %br
-        Authors
-        %br
-        = f.text_field :authors, "value" => medium.get(:authors), "max_length" => TEXT_FIELD_SIZE
-        %br
-        %br
-        URL of online article (copy and paste line
-        %br
-        beginning with 'http' from browser)
-        %br
-        = f.text_field :url, "value" => medium.get(:url), "max_length" => URL_SIZE
-      %td{align: "left", valign: "top"}
-        Summary of content
-        %br
-        = f.text_area :body, "value" => medium.get(:body), cols: "25", rows: "20"
-    %tr
-      %td{align: "left", valign: "top"}
-        %br
-        The day you read the article, or saw or heard
-        %br
-        the program
-        #calendar
-          &#160;  &#160;
-          #{calendar_date_select_tag "retrieval_date", medium.get(:retrieval_date).blank?? [] : medium.retrieval_date_mmm_d_yyyy, :year_range => 100.years.ago..0.years.ago}
-      %td{align: "left", valign: "top"}
-        %br
-        The day the article was first published
-        %br
-        or broadcast
-        #calendar
-          &#160;  &#160;
-          #{calendar_date_select_tag "publication_date", medium.get(:publication_date).blank?? [] :medium.publication_date_mmm_d_yyyy, :year_range => 100.years.ago..0.years.ago}
-  - if what == 'medium'
-    .actions
+
+%table.medium
+  %tr
+    %th
+    %th
+  %tr
+    %td{align: "left", valign: "top"}
+      %b Choose from the following
       %br
-      = f.submit SAVE_MEDIUM_BUTTON, data: { disable_with: SAVING_BE_PATIENT }
+      - Article.all.each do |s|
+        - str = s.get "name"
+        - if str =~ /online/i
+          =radio_button_tag "article_id", s.get( :id ), true
+          =label_tag str
+        - else
+          =radio_button_tag "article_id", s.get( :id ), false
+          =label_tag str
+        %br
       %br
+      %b Title or name of article or program
+      %br
+      = text_field_tag "medium[title]", medium.get(:title), max_length: TEXT_FIELD_SIZE
+      %br
+      %br
+      Name of publication or program
+      %br
+      = text_field_tag "medium[name]", medium.get(:name), max_length: TEXT_FIELD_SIZE
+      %br
+      %br
+      Authors
+      %br
+      = text_field_tag "medium[authors]", medium.get(:authors), max_length: TEXT_FIELD_SIZE
+      %br
+      %br
+      URL of online article (copy and paste line
+      %br
+      beginning with 'http' from browser)
+      %br
+      = text_field_tag "medium[url]", medium.get(:url), max_length: URL_SIZE
+    %td{align: "left", valign: "top"}
+      Summary of content
+      %br
+      = text_area_tag "medium[body]", medium.get(:body), cols: 25, rows: 20
+  %tr
+    %td{align: "left", valign: "top"}
+      %br
+      The day you read the article, or saw or heard
+      %br
+      the program
+      %br
+      %input{type: "date", name: "retrieval_date", class: 'form-control'}
+    %td{align: "left", valign: "top"}
+      %br
+      The day the article was first published
+      %br
+      or broadcast
+      %br
+      %input{type: "date", name: "publication_date", class: 'form-control'}
+
 %br
 = link_to 'Articles and programs', "/media"
 %br
