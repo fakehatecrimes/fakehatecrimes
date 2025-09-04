@@ -64,3 +64,38 @@
         = yield
 
     %script{src: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", integrity: "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM", crossorigin: "anonymous", type: "text/javascript"}
+    :javascript
+      document.addEventListener("DOMContentLoaded", function() {
+        // Set default values to first day of current month to make it obvious users need to change the dates
+        var now = new Date();
+        var firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        var dateString = firstDayOfMonth.getFullYear() + '-' + 
+                        String(firstDayOfMonth.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(firstDayOfMonth.getDate()).padStart(2, '0');
+        
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+          input.value = dateString;
+          // Make date fields look more like placeholders
+          input.style.color = '#999';
+          input.style.fontStyle = 'italic';
+          
+          // When user changes the date, make it look normal
+          input.addEventListener('change', function() {
+            if (this.value !== dateString) {
+              this.style.color = '';
+              this.style.fontStyle = '';
+            }
+          });
+        });
+        
+        // If there are validation errors (flash notice), scroll to top to show them
+        var flashNotice = document.querySelector('.alert, .notice, .error');
+        if (flashNotice) {
+          window.scrollTo(0, 0);
+        }
+        
+        // Debug: Log date values to console to help with validation issues
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+          console.log('Date field:', input.name, '=', input.value);
+        });
+      });

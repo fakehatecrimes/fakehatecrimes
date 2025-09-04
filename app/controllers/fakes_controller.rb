@@ -150,7 +150,11 @@ class FakesController < ApplicationController
       else
         unless medium.save
           fake.errors.add( :media, "- a report of a fake must have at least one tv, radio, print or online reference unless it's merely '#{SUSPECTED}'" )
-          return
+          # Also add medium validation errors to the notice
+          medium_errors = medium.errors.full_messages.join('; ')
+          notice = 'Report not saved: ' + flash_errs( fake ) + (medium_errors.present? ? '; ' + medium_errors : '')
+          flash[:notice] = notice
+          return notice
         end
       end
       fake.save!

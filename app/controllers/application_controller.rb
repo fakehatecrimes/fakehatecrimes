@@ -53,9 +53,9 @@ class ApplicationController < ActionController::Base
     errs = []
     ['retrieval_date', 'publication_date'].each do |str|
       unless hash[str].blank?
-        date = Medium.valid_date(hash[str])
         begin
-          hash[str] = DateTime.parse(date)
+          # Handle YYYY-MM-DD format from HTML5 date inputs
+          hash[str] = Date.parse(hash[str])
         rescue ArgumentError => err
           errs << err.message
           hash[str] = ''
@@ -65,7 +65,10 @@ class ApplicationController < ActionController::Base
 
     @medium = Medium.new(hash)
 
-    return @medium unless Medium.any_medium_fields_set?( hash ) if self.class == FakesController
+    # Only skip validation if no medium fields are set AND we're in FakesController
+    if self.class == FakesController && !Medium.any_medium_fields_set?(hash)
+      return @medium
+    end
 
     if errs.present?
       @medium.errors.clear

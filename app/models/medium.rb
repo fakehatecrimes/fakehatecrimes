@@ -197,24 +197,25 @@ class Medium < ActiveRecord::Base
     date_format date
   end
 
-  DATE_FMT = '%m/%d/%Y'
   def Medium.comparable( date )
     return date if date.blank? or date.class == Date # If it's blank, we can't help you - if it's already a date, you don't need us
-    comp = nil
-    time = date
-    time = Medium.this_is_america!( date ) if date.class == String
-    begin
-      comp = Date.strptime time, DATE_FMT
-    rescue TypeError
-      comp = time
-    rescue ArgumentError => ae
-      if ae.message =~ /invalid.+date/i
-        raise ArgumentError.new "'#{ time }' is invalid for method Date.strptime with '#{ DATE_FMT }' format"
-      else
-        raise ae
-      end
+    
+    # Handle YYYY-MM-DD format (from HTML5 date inputs)
+    if date.class == String && date =~ /^\d{4}-\d{2}-\d{2}$/
+      return Date.parse(date)
     end
-    comp
+    
+    # Handle MM/DD/YYYY format (legacy)
+    if date.class == String && date =~ /^\d{2}\/\d{2}\/\d{4}$/
+      return Date.strptime(date, '%m/%d/%Y')
+    end
+    
+    # Fallback to Date.parse for other formats
+    begin
+      return Date.parse(date.to_s)
+    rescue ArgumentError
+      return nil
+    end
   end
 
 # The parameter is probably a UTC::Time with all kinds of extraneous bumf on the end
