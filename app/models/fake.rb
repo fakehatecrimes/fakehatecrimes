@@ -107,23 +107,9 @@ def date_check
     reason_text = get(:reason)
     return if reason_text.blank?
     
-    # First, strip any existing HTML to prevent HTML injection
-    reason_text = reason_text.gsub(/<[^>]*>/, '')
-    
-    # URL regex pattern that matches http, https, www, and common TLDs
-    url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
-    
-    processed_reason = reason_text.gsub(url_pattern) do |url|
-      # Ensure URL has protocol
-      full_url = url.start_with?('http') ? url : "http://#{url}"
-      
-      # Validate URL format
-      if full_url =~ /^https?:\/\/[^\s]+$/i
-        "<a href=\"#{full_url}\" target=\"_blank\" class=\"auto-link\">#{url}</a>"
-      else
-        url
-      end
-    end
+    # Strip all HTML to prevent HTML injection and malformed links
+    # This is the safest approach to prevent the whole page from becoming a link
+    processed_reason = reason_text.gsub(/<[^>]*>/, '')
     
     self[:reason] = processed_reason
   end

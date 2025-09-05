@@ -88,7 +88,6 @@ class MediaController < ApplicationController
 
   def create
     args = sanitize_params params
-    Rails.logger.debug "MediaController#create - args: #{args.inspect}"
     
     # Create the medium using the permitted parameters
     @medium = Medium.new(media_params)
@@ -104,16 +103,10 @@ class MediaController < ApplicationController
     @medium["retrieval_date"] = args["retrieval_date"] if args["retrieval_date"]
     @medium["publication_date"] = args["publication_date"] if args["publication_date"]
     
-    Rails.logger.debug "MediaController#create - @medium before save: #{@medium.inspect}"
-    Rails.logger.debug "MediaController#create - @medium.valid? before save: #{@medium.valid?}"
-    Rails.logger.debug "MediaController#create - @medium.errors before save: #{@medium.errors.full_messages}"
-    
     respond_to do |format|
       if @medium.save
-        Rails.logger.debug "MediaController#create - Medium saved successfully"
         format.html { redirect_to '/media', notice: Article::DESCRIPTION + ' saved' }
       else
-        Rails.logger.debug "MediaController#create - Medium save failed: #{@medium.errors.full_messages}"
         flash_errs( @medium )
         format.html { render template: 'media/new' }
       end

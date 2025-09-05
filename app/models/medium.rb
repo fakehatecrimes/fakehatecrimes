@@ -275,23 +275,9 @@ class Medium < ActiveRecord::Base
     body_text = self.body  # Changed from get(:body)
     return if body_text.blank?
     
-    # First, strip any existing HTML to prevent HTML injection
-    body_text = body_text.gsub(/<[^>]*>/, '')
-    
-    # URL regex pattern that matches http, https, www, and common TLDs
-    url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
-    
-    processed_body = body_text.gsub(url_pattern) do |url|
-      # Ensure URL has protocol
-      full_url = url.start_with?('http') ? url : "http://#{url}"
-      
-      # Validate URL format
-      if full_url =~ /^https?:\/\/[^\s]+$/i
-        "<a href=\"#{full_url}\" target=\"_blank\" class=\"auto-link\">#{url}</a>"
-      else
-        url
-      end
-    end
+    # Strip all HTML to prevent HTML injection and malformed links
+    # This is the safest approach to prevent the whole page from becoming a link
+    processed_body = body_text.gsub(/<[^>]*>/, '')
     
     self.body = processed_body  # Changed from set(:body, processed_body)
   end
