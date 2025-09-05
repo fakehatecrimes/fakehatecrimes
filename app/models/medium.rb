@@ -275,6 +275,9 @@ class Medium < ActiveRecord::Base
     body_text = self.body  # Changed from get(:body)
     return if body_text.blank?
     
+    # First, strip any existing HTML to prevent HTML injection
+    body_text = body_text.gsub(/<[^>]*>/, '')
+    
     # URL regex pattern that matches http, https, www, and common TLDs
     url_pattern = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/i
     

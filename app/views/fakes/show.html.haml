@@ -31,7 +31,7 @@
       
       %p
         %strong Summary:
-        = auto_link_urls(@fake.get :reason)
+        = @fake.get :reason
 
 .text-center.mt-20
   = link_to '← Back to Reports', "/reports", class: 'btn btn-primary'

@@ -88,9 +88,36 @@ class MediaController < ApplicationController
 
   def create
     args = sanitize_params params
-    @medium = create_medium_if_possible( args )
-    # The create_medium_if_possible method already handles saving and response
-    # No need to call @medium.save! here
+    Rails.logger.debug "MediaController#create - args: #{args.inspect}"
+    
+    # Create the medium using the permitted parameters
+    @medium = Medium.new(media_params)
+    @medium.user = User.find(args["user_id"]) if args["user_id"]
+    @medium.article = Article.find(args["article_id"]) if args["article_id"]
+    
+    # Set additional fields that might not be in media_params
+    @medium["title"] = args["medium"]["title"] if args["medium"] && args["medium"]["title"]
+    @medium["name"] = args["medium"]["name"] if args["medium"] && args["medium"]["name"]
+    @medium["authors"] = args["medium"]["authors"] if args["medium"] && args["medium"]["authors"]
+    @medium["url"] = args["medium"]["url"] if args["medium"] && args["medium"]["url"]
+    @medium["body"] = args["medium"]["body"] if args["medium"] && args["medium"]["body"]
+    @medium["retrieval_date"] = args["retrieval_date"] if args["retrieval_date"]
+    @medium["publication_date"] = args["publication_date"] if args["publication_date"]
+    
+    Rails.logger.debug "MediaController#create - @medium before save: #{@medium.inspect}"
+    Rails.logger.debug "MediaController#create - @medium.valid? before save: #{@medium.valid?}"
+    Rails.logger.debug "MediaController#create - @medium.errors before save: #{@medium.errors.full_messages}"
+    
+    respond_to do |format|
+      if @medium.save
+        Rails.logger.debug "MediaController#create - Medium saved successfully"
+        format.html { redirect_to '/media', notice: Article::DESCRIPTION + ' saved' }
+      else
+        Rails.logger.debug "MediaController#create - Medium save failed: #{@medium.errors.full_messages}"
+        flash_errs( @medium )
+        format.html { render template: 'media/new' }
+      end
+    end
   end
 
   def show
@@ -111,7 +138,7 @@ class MediaController < ApplicationController
 
   def update
     args = sanitize_params params
-    @medium = Medium.find(media_params[:id])
+    @medium = Medium.find(params[:id])  # Use params[:id] instead of media_params[:id]
     @medium["title"] = args["medium"]["title"]
     @medium["url"] = args["medium"]["url"]
     @medium["name"] = args["medium"]["name"]
@@ -119,16 +146,15 @@ class MediaController < ApplicationController
     @medium["body"] = args["medium"]["body"]
     @medium["retrieval_date"] = args["medium"]["retrieval_date"]
     @medium["publication_date"] = args["medium"]["publication_date"]
-    @medium.article = Article.find(media_params["article_id"])
+    @medium.article = Article.find(args["article_id"])
 
     respond_to do |format|
       if @medium.save
         ApplicationController.create_picture( @medium )
         format.html { redirect_to '/media', notice: 'Updated' }
       else
-        errs = 'Medium not saved: ' + flash_errs( @medium )
-        flash[:notice] = errs
-        format.html { redirect_to "/media/#{params[:id]}/edit", notice: errs }
+        flash_errs( @medium )
+        format.html { render template: 'media/edit' }
       end
     end
   end
@@ -142,7 +168,12 @@ class MediaController < ApplicationController
   end
 
   def media_params
-    params.permit(:id, :user_id, :title, :name, :authors, :url, :body, :retrieval_date, :publication_date, :article_id)
+    # Handle both nested medium parameters and top-level parameters
+    if params[:medium]
+      params.require(:medium).permit(:title, :name, :authors, :url, :body)
+    else
+      params.permit(:id, :user_id, :title, :name, :authors, :url, :body, :retrieval_date, :publication_date, :article_id)
+    end
   end
 
 end
