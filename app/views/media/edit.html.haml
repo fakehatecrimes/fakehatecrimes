@@ -1,5 +1,3 @@
-%link{href: "/stylesheets/calendar_date_select/silver.css", media: "all", rel: "stylesheet", type:"text/css"}/
-- CalendarDateSelect.format = :american
 %br
 %h3
   = Article::DESCRIPTION
@@ -46,12 +44,12 @@
             %b
               date read #{INT_DATE_MSG}
             %br
-            = f.text_field :retrieval_date, value: @medium.retrieval_date_yyyy_mm_dd
+            = f.date_field :retrieval_date, value: @medium.retrieval_date_yyyy_mm_dd
           %p
             %b
               date published #{INT_DATE_MSG}
             %br
-            = f.text_field :publication_date, value: @medium.publication_date_yyyy_mm_dd
+            = f.date_field :publication_date, value: @medium.publication_date_yyyy_mm_dd
           %p
             %b article/program type
             %br

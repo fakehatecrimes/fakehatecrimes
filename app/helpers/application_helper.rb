@@ -1,6 +1,4 @@
-require "#{ Rails.root }/lib/calendar_date_select/lib/calendar_date_select.rb"
 
-CalendarDateSelect.format = :american
 
 HIT_THIS_BUTTON = "Fill in the form and hit this button"
 SAVE_BUTTON = " Save "

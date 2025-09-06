@@ -1,13 +1,10 @@
 %html
   %body
-    - require "#{ Rails.root }/lib/calendar_date_select/lib/calendar_date_select.rb"
-    - CalendarDateSelect.format = :american
     %meta{content: "text/html;charset=UTF-8", "http-equiv" => "content-type"}/
     %meta{name: "viewport", content: "width=device-width, initial-scale=1"}/
     %meta{content: "This is a project to create a database of hate crime hoaxes in the USA. It builds on the work of Laird Wilcox, 'Crying Wolf'", name: "description"}/
     %meta{content: "fake hate crimes, hate crime hoaxes, Southern Poverty Law Center, SPLC, Anti-Defamation League, ADL", name: "keywords"}/
     %title fakehatecrimes.org
-    %link{href: "/stylesheets/calendar_date_select/silver.css", media: "all", rel: "stylesheet", type:"text/css"}/
     %link{href: "/stylesheets/pagination.css", media: "all", rel: "stylesheet", type:"text/css"}/
     %link{ href: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity: "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"}/
     = stylesheet_link_tag "application", media: "all"
@@ -15,7 +12,6 @@
     -# = javascript_include_tag "application"
     -# = javascript_include_tag "prototype"
     -# = javascript_include_tag "modern"
-    -# %script{src: "/assets/calendar_date_select/public/javascripts/calendar_date_select/calendar_date_select.js", type:"text/javascript"}
     = csrf_meta_tags
 
     .container-fluid
