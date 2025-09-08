@@ -5,6 +5,7 @@ development:
     password:
     host: db
     encoding: utf8
+    collation: utf8_general_ci
 
 test:
     adapter: mysql2
@@ -13,3 +14,4 @@ test:
     password:
     host: db
     encoding: utf8
+    collation: utf8_general_ci

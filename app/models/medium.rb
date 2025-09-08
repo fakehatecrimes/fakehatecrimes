@@ -3,7 +3,8 @@ require File.join(File.dirname( __FILE__ ), '../helpers/application_helper' )
 class Medium < ActiveRecord::Base
 
   include Generic
-
+  after_find :force_utf8
+  
   YEAR_REG = /^[1-9][0-9][0-9][0-9]$/
   EMPTY_THUMBNAIL = '<span id="thumbnail"/>'
   self.per_page = NUM_PER_PAGE
@@ -282,4 +283,9 @@ class Medium < ActiveRecord::Base
     self.body = processed_body  # Changed from set(:body, processed_body)
   end
 
+  def force_utf8
+    if url.present? && url.encoding != Encoding::UTF_8
+      self.url = url.dup.force_encoding("UTF-8")
+    end
+  end
 end
