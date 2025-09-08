@@ -68,8 +68,8 @@
 
   %br
   .text-center.mt-20
-    %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
-  %br
-  = link_to 'Articles and programs', "/media"
-  %br
+    - if what == 'fake'
+      %input{type: "submit", name: "commit", value: HIT_THIS_BUTTON, class: "btn btn-success btn-lg"}
+    - else
+      %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
   %br
