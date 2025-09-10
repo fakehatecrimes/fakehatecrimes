@@ -2,11 +2,7 @@
 %h3
   New #{Article::DESCRIPTION.downcase}
 
-%form{action: "/media", method: "post"}
-  = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
-  = hidden_field_tag('authenticity_token', form_authenticity_token)
-
-  %table.medium
+%table.medium
   %tr
     %th
     %th
@@ -73,3 +69,7 @@
     - else
       %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
   %br
+  = link_to 'Articles and programs', "/media"
+  %br
+  %br
+

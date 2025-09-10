@@ -54,7 +54,6 @@ class Hash
         str += "#{spaces}#{first} #{s} #{pointer}> #{v}"
       end
     end
-    puts str + "\n" if (n == 0) and pr
     str
   end
 

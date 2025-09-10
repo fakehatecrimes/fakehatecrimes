@@ -135,6 +135,9 @@ def create_report_with_one_old_and_one_new_medium
   fill_in 'date', :with =>             '12/01/2018'
   fill_in 'publication_date', :with => '12/02/2018'
   fill_in 'retrieval_date', :with =>   '12/03/2018'
+
+# puts "\npage:\n#{page.body}\n\n"
+  
   click_button HIT_THIS_BUTTON
   expect(Fake.count).to eq f + 1
   expect(Medium.count).to eq m + 1
