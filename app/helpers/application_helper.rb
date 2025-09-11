@@ -1,5 +1,4 @@
 
-
 HIT_THIS_BUTTON = "Fill in the form and hit this button"
 SAVE_BUTTON = " Save "
 SAVING_BE_PATIENT = "Saving - please be patient..."
@@ -54,6 +53,7 @@ class Hash
         str += "#{spaces}#{first} #{s} #{pointer}> #{v}"
       end
     end
+    puts str + "\n" if (n == 0) and pr
     str
   end
 

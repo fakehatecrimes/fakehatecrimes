@@ -66,74 +66,20 @@ class FakesController < ApplicationController
 
       @medium = create_medium_if_possible(arguments.dup)
       @fake = find_or_initialize_report(arguments.dup) # The fakes/new form has an area for creating a new medium too
-      
-      # Ensure date values are properly set from form parameters
-      # Handle dates directly without complex parsing to avoid issues
-      if arguments['date'].present?
-        begin
-          @fake.date = Date.parse(arguments['date'])
-        rescue ArgumentError
-          @fake.date = arguments['date'] # Keep as string if parsing fails
-        end
-      end
-      
-      if arguments['retrieval_date'].present?
-        begin
-          @medium.retrieval_date = Date.parse(arguments['retrieval_date'])
-        rescue ArgumentError
-          @medium.retrieval_date = arguments['retrieval_date'] # Keep as string if parsing fails
-        end
-      end
-      
-      if arguments['publication_date'].present?
-        begin
-          @medium.publication_date = Date.parse(arguments['publication_date'])
-        rescue ArgumentError
-          @medium.publication_date = arguments['publication_date'] # Keep as string if parsing fails
-        end
-      end
 
       uid = arguments['user_id']
       if uid.blank?
         format.html { redirect_to('/', notice: 'Invalid parameters') }
       else
         @fake.user = User.find uid
-        # Check if medium fields were actually provided
-        if Medium.any_medium_fields_set?(arguments)
-          notice = try_to_save_report( arguments, @fake, @medium )
-        else
-          notice = try_to_save_report_without_medium( arguments, @fake )
-        end
+        notice = try_to_save_report( arguments, @fake, @medium )
         if notice =~ /Report saved/
           format.html { redirect_to('/', notice: notice) }
         else
           # On errors, render new so the form shows validation messages
           flash[:notice] = notice
-          # Ensure the objects have the user's input for re-rendering
-          # Handle dates directly without complex parsing to avoid issues
-          if arguments['date'].present?
-            begin
-              @fake.date = Date.parse(arguments['date'])
-            rescue ArgumentError
-              @fake.date = arguments['date'] # Keep as string if parsing fails
-            end
-          end
-          
-          if arguments['retrieval_date'].present?
-            begin
-              @medium.retrieval_date = Date.parse(arguments['retrieval_date'])
-            rescue ArgumentError
-              @medium.retrieval_date = arguments['retrieval_date'] # Keep as string if parsing fails
-            end
-          end
-          
-          if arguments['publication_date'].present?
-            begin
-              @medium.publication_date = Date.parse(arguments['publication_date'])
-            rescue ArgumentError
-              @medium.publication_date = arguments['publication_date'] # Keep as string if parsing fails
-            end
-          end
+          @medium ||= Medium.new
+          @fake ||= Fake.new
           format.html { render template: 'fakes/new' }
         end
       end
@@ -158,7 +104,7 @@ class FakesController < ApplicationController
     add_media @fake, keys
 
     respond_to do |format|
-      notice = try_to_save_report_update( args, @fake )
+      notice = try_to_save_report( args, @fake )
 
       if notice =~ /Report saved/
         format.html { redirect_to('/reports', notice: notice) }
@@ -182,24 +128,18 @@ class FakesController < ApplicationController
 
   private
 
-  def try_to_save_report( args, fake, medium )
+  def try_to_save_report( args, fake, medium=nil )
+
+    if medium.nil?
+      return try_to_save_report_without_medium( args, fake )
+    end
 
     if fake.valid?
       type = MediaType.all.select{ |t| t.id == fake.get( :media_type_id )}.first
 
       if type.attributes['name'].downcase == SUSPECTED.downcase
-        # For suspected reports, medium is optional but if provided must be valid
-        if Medium.any_medium_fields_set?(args)
-          unless medium.save
-            # Medium was provided but invalid
-            medium_errors = medium.errors.full_messages.join('; ')
-            notice = 'Report not saved: ' + flash_errs( fake ) + (medium_errors.present? ? '; ' + medium_errors : '')
-            flash[:notice] = notice
-            return notice
-          end
-        end
+        medium.save
       else
-        # For non-suspected reports, medium is required and must be valid
         unless medium.save
           fake.errors.add( :media, "- a report of a fake must have at least one tv, radio, print or online reference unless it's merely '#{SUSPECTED}'" )
           # Also add medium validation errors to the notice
@@ -227,35 +167,6 @@ class FakesController < ApplicationController
 
   def try_to_save_report_without_medium( args, fake )
     if fake.valid?
-      type = MediaType.all.select{ |t| t.id == fake.get( :media_type_id )}.first
-      
-      # Check if medium is required for this report type
-      if type.attributes['name'].downcase != SUSPECTED.downcase
-        # Non-suspected reports require a medium
-        fake.errors.add( :media, "- a report of a fake must have at least one tv, radio, print or online reference unless it's merely '#{SUSPECTED}'" )
-        notice = 'Report not saved: ' + flash_errs( fake )
-        flash[:notice] = notice
-        return notice
-      end
-      
-      # For suspected reports, no medium is required
-      fake.save!
-      keys = args.keys.dup
-      add_media fake, keys
-      notice = 'Report saved'
-      flash[:notice] = notice
-      return notice
-    end
-    fake.media_check
-    notice = 'Report not saved: ' + flash_errs( fake )
-    flash[:notice] = notice
-    return notice
-  end
-
-  def try_to_save_report_update( args, fake )
-    if fake.valid?
-      # For updates, we don't require media validation since the report already exists
-      # and may already have media associated with it
       fake.save!
       keys = args.keys.dup
       add_media fake, keys

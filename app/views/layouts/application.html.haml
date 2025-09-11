@@ -18,6 +18,7 @@
       .row
         .col-xs-12
           = raw( modern_flash_format( flash[ :notice ] ) )
+          %button.nav-toggle{type: "button"} ☰
           #nav
             - if current_user
               = current_user.name
@@ -91,6 +92,6 @@
         
         // Debug: Log date values to console to help with validation issues
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
-         // console.log('Date field:', input.name, '=', input.value);
+          console.log('Date field:', input.name, '=', input.value);
         });
       });

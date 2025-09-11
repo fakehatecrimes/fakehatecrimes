@@ -2,7 +2,11 @@
 %h3
   New #{Article::DESCRIPTION.downcase}
 
-%table.medium
+%form{action: "/media", method: "post"}
+  = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
+  = hidden_field_tag('authenticity_token', form_authenticity_token)
+
+  %table.medium
   %tr
     %th
     %th
@@ -52,7 +56,7 @@
       the program
       %small.text-muted (required)
       %br
-      %input{type: "date", name: "retrieval_date", value: (medium.retrieval_date.present? ? (medium.retrieval_date.is_a?(String) ? medium.retrieval_date : medium.retrieval_date.strftime('%Y-%m-%d')) : ''), class: 'form-control'}
+      %input{type: "date", name: "retrieval_date", class: 'form-control'}
     %td{align: "left", valign: "top"}
       %br
       The day the article was first published
@@ -60,11 +64,12 @@
       or broadcast
       %small.text-muted (required)
       %br
-      %input{type: "date", name: "publication_date", value: (medium.publication_date.present? ? (medium.publication_date.is_a?(String) ? medium.publication_date : medium.publication_date.strftime('%Y-%m-%d')) : ''), class: 'form-control'}
+      %input{type: "date", name: "publication_date", class: 'form-control'}
 
   %br
-  - if what == 'medium'
-    .text-center.mt-20
-      %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
-    %br
-
+  .text-center.mt-20
+    %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
+  %br
+  = link_to 'Articles and programs', "/media"
+  %br
+  %br

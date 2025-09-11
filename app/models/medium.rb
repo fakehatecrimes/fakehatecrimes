@@ -4,7 +4,7 @@ class Medium < ActiveRecord::Base
 
   include Generic
   after_find :force_utf8
-  
+
   YEAR_REG = /^[1-9][0-9][0-9][0-9]$/
   EMPTY_THUMBNAIL = '<span id="thumbnail"/>'
   self.per_page = NUM_PER_PAGE
