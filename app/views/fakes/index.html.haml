@@ -1,5 +1,4 @@
-.text-center.mb-20
-  = link_to '➕ Add New Report', "/reports/new", class: 'btn btn-success'
+= link_to 'Add New Report', "/reports/new"
 
 .pagination
   = will_paginate @fakes, container: false
@@ -30,5 +29,5 @@
               %td
                 = button_to "Delete", { action: "destroy", id: fake.id }, confirm: "Are you sure you wish to delete this report?", method: :delete, class: 'btn btn-danger btn-sm'
 
-.text-center.mt-20
-  = link_to '➕ Add New Report', "/reports/new", class: 'btn btn-success'
+= link_to 'Add New Report', "/reports/new"
+%br
