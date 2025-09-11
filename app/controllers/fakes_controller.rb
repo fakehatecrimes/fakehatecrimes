@@ -66,6 +66,32 @@ class FakesController < ApplicationController
 
       @medium = create_medium_if_possible(arguments.dup)
       @fake = find_or_initialize_report(arguments.dup) # The fakes/new form has an area for creating a new medium too
+      
+      # Ensure date values are properly set from form parameters
+      # Handle dates directly without complex parsing to avoid issues
+      if arguments['date'].present?
+        begin
+          @fake.date = Date.parse(arguments['date'])
+        rescue ArgumentError
+          @fake.date = arguments['date'] # Keep as string if parsing fails
+        end
+      end
+      
+      if arguments['retrieval_date'].present?
+        begin
+          @medium.retrieval_date = Date.parse(arguments['retrieval_date'])
+        rescue ArgumentError
+          @medium.retrieval_date = arguments['retrieval_date'] # Keep as string if parsing fails
+        end
+      end
+      
+      if arguments['publication_date'].present?
+        begin
+          @medium.publication_date = Date.parse(arguments['publication_date'])
+        rescue ArgumentError
+          @medium.publication_date = arguments['publication_date'] # Keep as string if parsing fails
+        end
+      end
 
       uid = arguments['user_id']
       if uid.blank?
@@ -83,8 +109,31 @@ class FakesController < ApplicationController
         else
           # On errors, render new so the form shows validation messages
           flash[:notice] = notice
-          @medium ||= Medium.new
-          @fake ||= Fake.new
+          # Ensure the objects have the user's input for re-rendering
+          # Handle dates directly without complex parsing to avoid issues
+          if arguments['date'].present?
+            begin
+              @fake.date = Date.parse(arguments['date'])
+            rescue ArgumentError
+              @fake.date = arguments['date'] # Keep as string if parsing fails
+            end
+          end
+          
+          if arguments['retrieval_date'].present?
+            begin
+              @medium.retrieval_date = Date.parse(arguments['retrieval_date'])
+            rescue ArgumentError
+              @medium.retrieval_date = arguments['retrieval_date'] # Keep as string if parsing fails
+            end
+          end
+          
+          if arguments['publication_date'].present?
+            begin
+              @medium.publication_date = Date.parse(arguments['publication_date'])
+            rescue ArgumentError
+              @medium.publication_date = arguments['publication_date'] # Keep as string if parsing fails
+            end
+          end
           format.html { render template: 'fakes/new' }
         end
       end

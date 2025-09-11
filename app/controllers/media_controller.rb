@@ -100,8 +100,22 @@ class MediaController < ApplicationController
     @medium["authors"] = args["medium"]["authors"] if args["medium"] && args["medium"]["authors"]
     @medium["url"] = args["medium"]["url"] if args["medium"] && args["medium"]["url"]
     @medium["body"] = args["medium"]["body"] if args["medium"] && args["medium"]["body"]
-    @medium["retrieval_date"] = args["retrieval_date"] if args["retrieval_date"]
-    @medium["publication_date"] = args["publication_date"] if args["publication_date"]
+    # Handle dates with proper parsing
+    if args["retrieval_date"].present?
+      begin
+        @medium["retrieval_date"] = Date.parse(args["retrieval_date"])
+      rescue ArgumentError
+        @medium["retrieval_date"] = args["retrieval_date"] # Keep as string if parsing fails
+      end
+    end
+    
+    if args["publication_date"].present?
+      begin
+        @medium["publication_date"] = Date.parse(args["publication_date"])
+      rescue ArgumentError
+        @medium["publication_date"] = args["publication_date"] # Keep as string if parsing fails
+      end
+    end
     
     respond_to do |format|
       if @medium.save

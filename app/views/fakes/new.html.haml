@@ -33,7 +33,7 @@
           %label
             %strong Approximate date of hoax
             %small.text-muted (required)
-          %input{type: "date", name: "date", class: 'form-control'}
+          %input{type: "date", name: "date", value: (@fake.date.present? ? (@fake.date.is_a?(String) ? @fake.date : @fake.date.strftime('%Y-%m-%d')) : ''), class: 'form-control'}
         
         .form-group
           %label
@@ -58,6 +58,8 @@
               = check_box_tag "media_id_#{ medium.id }", medium.id
               = medium.get :title
         
-        %h4 Add New Article or Program
         = render partial: 'media/new', locals: {what: 'fake', medium: @medium}
+    
+    .text-center.mt-20
+      %input{type: "submit", name: "commit", value: HIT_THIS_BUTTON, class: "btn btn-success btn-lg"}
 
