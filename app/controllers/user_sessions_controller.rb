@@ -10,7 +10,7 @@ class UserSessionsController < ApplicationController
     @user_session = UserSession.new(user_session_params)
 
     if @user_session.save
-      redirect_to users_path
+      redirect_to "/"
     else
       redirect_to login_path, notice: flash[:notice]
     end
