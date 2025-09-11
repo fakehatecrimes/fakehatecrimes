@@ -18,7 +18,6 @@
       .row
         .col-xs-12
           = raw( modern_flash_format( flash[ :notice ] ) )
-          %button.nav-toggle{type: "button"} ☰
           #nav
             - if current_user
               = current_user.name

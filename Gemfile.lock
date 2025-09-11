@@ -101,7 +101,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0902)
+    mime-types-data (3.2025.0909)
     mini_mime (1.1.2)
     mini_portile2 (2.4.0)
     minitest (5.15.0)
