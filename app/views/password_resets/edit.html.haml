@@ -1,0 +1,14 @@
+%form#password_reset.new_password{"accept-charset" => "UTF-8", action: "/password_resets/update", method: "put"}
+  %br
+  %h3 Enter a new password, twice
+  = hidden_field_tag :token, @token
+  %label Password:
+  %br
+  = password_field_tag "password"
+  %br
+  %label Password again:
+  %br
+  = password_field_tag "password_confirmation"
+  %br
+  %br
+  = submit_tag "Update my password"

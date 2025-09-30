@@ -1,0 +1,72 @@
+= form_for(@user) do |f|
+  - if @user.errors.any?
+    #error_explanation
+  .field
+    = f.label :email
+    %br
+    - if what == 'edit'
+      %b= @user.email
+    - else
+      = f.text_field :email
+  .field
+    %br
+    - if what == 'edit'
+      = f.label :old_password
+      %br
+      = f.password_field :old_password, id: "old_password"
+      %input#toggle_old_password{ type: "checkbox" }
+      %label{ for: "toggle_old_password" } Show password
+  .field
+    = f.label :password
+    %br
+    = f.password_field :password, id: "user_password"
+    %input#toggle_user_password{ type: "checkbox" }
+    %label{ for: "toggle_user_password" } Show password
+    %br
+    %br
+  .field
+    = f.label "Password again"
+    %br
+    = f.password_field :password_confirmation, id: "user_password_confirmation"
+    %input#toggle_user_password_confirmation{ type: "checkbox" }
+    %label{ for: "toggle_usesr_password_confirmation" } Show password
+  - unless what == 'edit'
+    .field
+      %br
+      %img{src: word_link}/
+      %p
+        %label{for: "secret_word"} Enter the letters and numbers in the picture (case insensitive)
+        %br
+        = f.text_field :secret_word
+  .actions
+    %br
+    = f.submit HIT_THIS_BUTTON
+    %br
+  %br
+  
+- unless Rails.env.test?  
+  :javascript
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("toggle_old_password");
+      const password = document.getElementById("old_password");
+
+      toggle.addEventListener("change", () => {
+        password.type = toggle.checked ? "text" : "password";
+      });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("toggle_user_password");
+      const password = document.getElementById("user_password");
+
+      toggle.addEventListener("change", () => {
+        password.type = toggle.checked ? "text" : "password";
+      });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("toggle_user_password_confirmation");
+      const password = document.getElementById("user_password_confirmation");
+
+      toggle.addEventListener("change", () => {
+        password.type = toggle.checked ? "text" : "password";
+      });
+    });

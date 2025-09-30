@@ -1,0 +1,49 @@
+%br
+%h3= Article::DESCRIPTION
+= flash_errs @medium
+= form_for(@medium) do |f|
+  %table.medium
+    %tr
+      %td
+        = f.hidden_field :user_id
+        - unless @medium.fakes.empty?
+          %p
+            %b
+              reports which reference this
+              #{ @medium.article_name }
+            %br
+            - @medium.fakes.each do |report|
+              #{raw report.user_link( can_change?( report ) )}
+              %br
+        %p
+          %b title
+          %br
+          = @medium.title
+        %p
+          %b name
+          %br
+          = @medium.name
+        %p
+          %b authors
+          %br
+          = @medium.authors
+        %p
+          = raw @medium.picture
+        %p
+          %b url
+          %br
+          - unless @medium.url.blank?
+            %a{href: "#{@medium.url}"}= @medium.url
+        %p
+          %b summary
+          %br
+          = @medium.body
+        %p
+          %b date read
+          %br
+          = @medium.retrieval_date_yyyy_mm_dd
+        %p
+          %b date published
+          %br
+          = @medium.publication_date_yyyy_mm_dd
+%br

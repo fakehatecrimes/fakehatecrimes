@@ -1,0 +1,95 @@
+%div
+  %br
+  - if current_user
+    .box
+      = form_tag('/reports/new') do
+        = check_box_tag AGREE_TO_RULES_BELOW, 'yes', false
+        = AGREE_TO_RULES_BELOW
+        %div= submit_tag ADD_FAKE_BELOW
+      %br
+  %h2 How to report a fake hate crime - the rules
+  For the purposes of
+  = succeed "," do
+    %a{href: "/"} fakehatecrimes.org
+  = succeed ":" do
+    %a{href: "http://uslegal.com"} http://uslegal.com
+  %ul
+    %i
+      "A hate crime is usually defined by state law as one that involves threats, harassment, or physical
+      harm and is motivated by prejudice against someone's race, color, religion, national origin, ethnicity,
+      sexual orientation or physical or mental disability"
+    \-
+    %a{href: "http://definitions.uslegal.com/h/hate-crime"} http://definitions.uslegal.com/h/hate-crime
+  This website uses the above definition of a real hate crime, and defines a fake hate crime as a
+  report falsely claiming that a crime conforming to this definition has occurred.
+  %br
+  %br
+  All US states have a law something like the following:
+  %ul
+    %i
+      "It shall be unlawful for any person to report a crime or any element of a crime to any law enforcement or any officer
+      of any court, by any means, knowing that such report is false."
+  This means that accusing someone of falsely reporting a hate crime is accusing them of committing a crime.
+  %br
+  %br
+  If you
+  %i falsely
+  accuse someone of falsely reporting a hate crime,
+  you may be successfully sued for libel.
+  %br
+  %br
+  Just because you think you know that a non-existent hate crime was falsely reported, does
+  not mean you may accuse someone of doing so.
+  %br
+  %br
+  %h2 Alleged fake hate crimes fit into several categories:
+  %ul
+    %li
+      A person was convicted of falsely reporting a hate crime, either because
+    %ol
+      %li
+        The crime never took place, or
+      %li
+        The crime was committed by the alleged victim, or accomplices of the alleged victim
+    %li
+      A person admitted falsely reporting a hate crime
+    %li
+      Someone has been charged with falsely reporting a hate crime, either because
+    %ol
+      %li
+        The police claim the crime never took place, or
+      %li
+        The police claim the crime was committed by the alleged victim, or accomplices of the alleged victim
+    %li
+      It looks likely that there was a fake hate crime
+  In all these cases, except the last one, a reference to a tv or radio program, or a newspaper or internet article must be submitted.
+
+  If someone has been charged but not convicted, or if you merely suspect a hate crime hoax, no-one can be named, explicitly or implicitly,
+  as being responsible for the false report. You may not claim
+  %ul
+    %i A member of the lesbian  gay association painted a swastika on the carpet in order to attract sympathy for the cause
+  You may enter a
+  %b suspected
+  fake hate crime, but you must give a reason, for example
+  %ul
+    %i The door to the lesbian  gay association was left unlocked that night
+  If a "
+  %b> suspected
+  " hoax is subsequently shown to be an actual hate crime, you should edit the report and click on
+  "
+  %b>= NOT_A_FAKE
+  " for the type of crime.
+  %br
+  .content
+    %br
+    %h3 Please use this site responsibly
+  - if current_user
+    .box
+      = form_tag('/reports/new') do
+        = check_box_tag AGREE_TO_RULES_ABOVE, 'yes', false
+        = AGREE_TO_RULES_ABOVE
+        %div= submit_tag ADD_FAKE_ABOVE
+      %br
+  %br
+%div
+  %hr/

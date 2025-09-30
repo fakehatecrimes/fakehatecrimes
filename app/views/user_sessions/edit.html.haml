@@ -1,0 +1,3 @@
+= render partial: 'form', locals: {what: 'edit'}
+- if current_user and current_user.admin?
+  = link_to 'Users', users_path

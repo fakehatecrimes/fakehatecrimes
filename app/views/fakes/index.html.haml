@@ -1,0 +1,33 @@
+= link_to 'Add New Report', "/reports/new"
+
+.pagination
+  = will_paginate @fakes, container: false
+
+.card
+  .table-responsive
+    %table
+      - if current_user && current_user.admin?
+        %thead
+          %tr
+            %th User
+            %th Report
+            %th URL
+            %th Description
+            %th Actions
+      %tbody
+        - @fakes.each do |fake|
+          %tr{class: "#{cycle('media-list-line-even', 'media-list-line-odd')}"}
+            - if current_user && current_user.admin?
+              %td= fake.user.email
+            %td= raw fake.user_link( can_change?( fake ) )
+            - medium = fake.media.reject { |m| m.attributes["url"].to_s.encode("UTF-8", invalid: :replace, undef: :replace).blank? }.first
+            %td
+              = (medium.nil?? raw( '<br/>' ) : raw( medium.urlink ) )
+            %td
+              = (medium.nil?? raw( '<br/>' ) : raw( medium.short_description( can_change?( medium ), false ) ) )
+            - if current_user && current_user.admin?
+              %td
+                = button_to "Delete", { action: "destroy", id: fake.id }, confirm: "Are you sure you wish to delete this report?", method: :delete, class: 'btn btn-danger btn-sm'
+
+= link_to 'Add New Report', "/reports/new"
+%br

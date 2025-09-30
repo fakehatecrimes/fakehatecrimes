@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mariadb:10.1
+    platform: linux/amd64
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: myapp_development
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle _1.17.3_ exec rails server -b 0.0.0.0 -p 3000"
+    environment:
+      - PHANTOMJS_BIN=/usr/local/bin/phantomjs
+      - PHANTOMJS_PATH=/usr/local/bin/phantomjs
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+      - "3001:3001" 
+      - "3002:3002"
+      - "3003:3003"
+      - "3004:3004"
+      - "3005:3005"
+      - "3006:3006"
+      - "3007:3007"
+      - "3008:3008"
+      - "3009:3009"
+    depends_on:
+      - db
+    working_dir: /app
+
+volumes:
+  db-data:

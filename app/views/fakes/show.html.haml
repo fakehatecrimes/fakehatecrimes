@@ -1,0 +1,40 @@
+.card
+  %h3
+    Report #{@fake.id}.
+  
+  .row
+    .col-md-6
+      %h4 Articles/Programs
+      = raw Medium.thumbnail( @fake.media )
+      - @fake.media.each do |medium|
+        .media-item
+          = check_box_tag( "media_id_#{ medium.id }", medium.id, true, disabled: true )
+          = raw( medium.short_description( can_change?( medium ) ) )
+    
+    .col-md-6
+      %h4 Details
+      - MediaType.all.each do |s|
+        - if @fake.get( :media_type_id ) == s.id
+          %p
+            %strong Type of hoax:
+            = radio_button_tag( :media_type, s.name, checked: true, disabled: true, readonly: true)
+            = s.name
+      
+      %p
+        %strong Date:
+        = @fake.date_yyyy_mm_dd
+      
+      %p
+        %strong Location:
+        = @fake.get :city
+        = @fake.get :state
+      
+      %p
+        %strong Summary:
+        = @fake.get :reason
+
+.text-center.mt-20
+  = link_to '← Back to Reports', "/reports", class: 'btn btn-primary'
+
+:javascript
+  document.getElementById( 'thumbnail' ).width = 400;

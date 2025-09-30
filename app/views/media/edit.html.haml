@@ -1,0 +1,68 @@
+%br
+%h3
+  = Article::DESCRIPTION
+  = "#{ @medium.id }."
+  #{raw( @medium.user_name current_user )}
+= flash_errs @medium
+= raw( @medium.user_name current_user )
+- if can_change?( @medium )
+  = form_for(@medium) do |f|
+    %table.medium
+      %tr
+        %td
+          = f.hidden_field :user_id
+          - unless @medium.fakes.empty?
+            %p
+              %b reports
+              %br
+              - @medium.fakes.each do |report|
+                = raw report.user_link( can_change?( report ) )
+                %br
+          %p
+            %b title
+            %br
+            = f.text_field :title, "maxlength" => TEXT_FIELD_SIZE
+          %p
+            %b name
+            %br
+            = f.text_field :name, "maxlength" => TEXT_FIELD_SIZE
+          %p
+            %b authors
+            %br
+            = f.text_field :authors, "maxlength" => TEXT_FIELD_SIZE
+          %p
+            = raw @medium.picture
+          %p
+            %b url
+            %br
+            = f.text_field :url, "maxlength" => URL_SIZE
+          %p
+            %b summary
+            %br
+            = f.text_area :body
+          %p
+            %b
+              date read #{INT_DATE_MSG}
+            %br
+            = f.text_field :retrieval_date, value: @medium.retrieval_date_yyyy_mm_dd
+          %p
+            %b
+              date published #{INT_DATE_MSG}
+            %br
+            = f.text_field :publication_date, value: @medium.publication_date_yyyy_mm_dd
+          %p
+            %b article/program type
+            %br
+
+            - Article.all.each do |s|
+              - str = s.get "name"
+              - if s.get( :id ) == @medium.get( :article_id )
+                =radio_button_tag "article_id", s.get( :id ), true
+                =label_tag str
+              - else
+                =radio_button_tag "article_id", s.get( :id ), false
+                =label_tag str
+              %br
+          %p
+            = f.submit SAVE_BUTTON, data: { disable_with: SAVING_BE_PATIENT }
+%br

@@ -1,0 +1,18 @@
+%form#search_media.search_media{"accept-charset" => "UTF-8", action: "/search", method: "get"}
+  %div{style: "margin:0;padding:0;display:inline"}
+    %br
+    %table.search
+      %tr
+        %td
+          %br
+          Enter text to search for. Put quotes around it, like this, "Azalea Cooley", if you mean
+          %br
+          "these words, in this order". Enter a year, eg. 2010, to search for the reports for that year:
+          %br
+          %br
+          = text_field_tag :q, '', maxlength: 40, size: 50
+          .actions
+            %br
+            %input#media_search{type: "submit", value: "#{SEARCH_BUTTON}"}
+            %br
+%div.strongwatermark

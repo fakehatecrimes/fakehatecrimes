@@ -1,0 +1,98 @@
+%html
+  %body
+    %meta{content: "text/html;charset=UTF-8", "http-equiv" => "content-type"}/
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}/
+    %meta{content: "This is a project to create a database of hate crime hoaxes committed (mostly) in the USA. It builds on the work of Laird Wilcox, 'Crying Wolf'", name: "description"}/
+    %meta{content: "fake hate crimes, hate crime hoaxes, Southern Poverty Law Center, SPLC, Anti-Defamation League, ADL", name: "keywords"}/
+    %title fakehatecrimes.org
+    %link{href: "/stylesheets/pagination.css", media: "all", rel: "stylesheet", type:"text/css"}/
+    %link{ href: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity: "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"}/
+    = stylesheet_link_tag "application", media: "all"
+    = stylesheet_link_tag "modern", media: "all"
+    = javascript_include_tag "application"
+    -# = javascript_include_tag "prototype"
+    -# = javascript_include_tag "modern"
+    = csrf_meta_tags
+
+    .container-fluid
+      .row
+        .col-xs-12
+          - message = "Improvements to site - 'Join' sends confimation email, 'Contact' works, 'show password', improved layout, and many others"
+          - notice = ((Time.now < Date.new(2025, 11, 15)) and flash[ :notice ].to_s.strip.empty?) ? message : flash[:notice] 
+          = raw( modern_flash_format( notice ) )
+          #nav
+            - if current_user
+              = current_user.name
+              |
+              %a{href: "/logout"} Logout
+              |
+              %a{href: "/"} Reports
+              |
+              %a{href: "/search"} Search
+              |
+              %a{href: "/media"} Media
+              |
+              %a{href: "/graphs"} Graphs
+              |
+              %a{href: "/email"} Contact
+              |
+              = link_to "Help", edit_user_path(current_user.id)
+            - else
+              %a{href: "/login"} Login
+              |
+              %a{href: "/"} Reports
+              |
+              %a{href: "/search"} Search
+              |
+              %a{href: "/media"} Media
+              |
+              %a{href: "/graphs"} Graphs
+              |
+              %a{href: "/users/new"} Join
+              |
+              %a{href: "/email"} Contact
+              |
+              %a{href: '/password_resets/new'} Help
+          
+          .top-description
+            = render partial: 'main/top'
+
+      #main-container
+        = yield
+
+    %script{src: "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", integrity: "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM", crossorigin: "anonymous", type: "text/javascript"}
+    :javascript
+      document.addEventListener("DOMContentLoaded", function() {
+        // Set default values to first day of current month to make it obvious users need to change the dates
+        var now = new Date();
+        var firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        var dateString = firstDayOfMonth.getFullYear() + '-' + 
+                        String(firstDayOfMonth.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(firstDayOfMonth.getDate()).padStart(2, '0');
+        
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+          input.value = dateString;
+          // Make date fields look more like placeholders
+          input.style.color = '#999';
+          input.style.fontStyle = 'italic';
+          
+          // When user changes the date, make it look normal
+          input.addEventListener('change', function() {
+            if (this.value !== dateString) {
+              this.style.color = '';
+              this.style.fontStyle = '';
+            }
+          });
+        });
+        
+        // If there are validation errors (flash notice), scroll to top to show them
+        var flashNotice = document.querySelector('.alert, .notice, .error');
+        if (flashNotice) {
+          window.scrollTo(0, 0);
+        }
+        
+        // Debug: Log date values to console to help with validation issues
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+          console.log('Date field:', input.name, '=', input.value);
+        });
+      });
