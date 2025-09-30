@@ -15,3 +15,14 @@ test:
     host: db
     encoding: utf8
     collation: utf8_general_ci
+
+production: 
+    adapter: mysql2
+    encoding: utf8mb4
+    collation: utf8mb4_unicode_ci
+    charset: utf8mb4
+    database:
+    username:
+    password:
+    host: 127.0.0.1 
+

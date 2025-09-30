@@ -16,7 +16,7 @@
         %tr{class: "#{cycle('media-list-line-odd', 'media-list-line-even')}"}
           %td= raw( medium.user_name current_user )
           %td= raw medium.titlink( current_user )
-          %td= raw( medium.urlink )
+          %td= medium&.urlink || '<br/>'.html_safe
           %td= article_name
           %td= raw medium.either_date
           %td

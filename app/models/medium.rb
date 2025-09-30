@@ -102,11 +102,14 @@ class Medium < ActiveRecord::Base
   end
 
   def urlink
-    url = get :url
-    return '<br/>' if url.blank?
-    link = url.dup
-    link = link[0..LINK_SIZE] + '...' if link.size > LINK_SIZE
-    "<a href=\"#{ url }\">#{ link }</a>"
+    raw_url = get(:url).to_s
+    url = raw_url.dup.force_encoding("UTF-8")
+                .encode("UTF-8", invalid: :replace, undef: :replace, replace: "?")
+
+    return '<br/>'.html_safe if url.blank?
+
+    link = url[0..LINK_SIZE] + "..." if url.size > LINK_SIZE
+    "<a href=\"#{url}\">#{link}</a>".html_safe
   end
 
   def titlink( can_change, show_id=false )
