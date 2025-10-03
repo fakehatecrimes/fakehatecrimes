@@ -4,7 +4,6 @@
   = "#{ @medium.id }."
   #{raw( @medium.user_name current_user )}
 = flash_errs @medium
-= raw( @medium.user_name current_user )
 - if can_change?( @medium )
   = form_for(@medium) do |f|
     %table.medium
