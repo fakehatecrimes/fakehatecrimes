@@ -105,10 +105,11 @@ class Medium < ActiveRecord::Base
     raw_url = get(:url).to_s
     url = raw_url.dup.force_encoding("UTF-8")
                 .encode("UTF-8", invalid: :replace, undef: :replace, replace: "?")
-
     return '<br/>'.html_safe if url.blank?
 
+    link = url.dup
     link = url[0..LINK_SIZE] + "..." if url.size > LINK_SIZE
+   Rails.logger.info("Returning for medium #{id} <a href=\"#{url}\">#{link}</a>".html_safe)
     "<a href=\"#{url}\">#{link}</a>".html_safe
   end
 
