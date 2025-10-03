@@ -20,14 +20,12 @@
             (PDF). From then on, most reports are from online
             news sources. The data does not show the ratio of fake to real hate crimes.
 %br
-%div
+%div.charts-container
   %table{ id: 'charts_table', width: '95%' }
     %tr
       %td{ id: 'charts_td', style: "width: '85%', position: 'relative'" }
         = high_chart( "years_chart", @years_chart )
         = high_chart( "months_chart", @months_chart )
-
-%div.strongwatermark
 
 :javascript
   function timeout() {
