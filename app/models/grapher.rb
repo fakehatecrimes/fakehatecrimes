@@ -59,19 +59,18 @@ class Grapher
   end
 
   def Grapher.number_of_hoaxes_in_month( fakes, year, month )
-    fakes.each         { |fake| fake.delete if fake.date.nil? }
-    arr = fakes.select { |fake| fake.date.year == year && fake.date.month == month }
+    arr = fakes.select { |fake| fake.date.present? && fake.date.year == year && fake.date.month == month }
     arr.size
   end
 
   def Grapher.all_year_months_in_which_more_than_two_hoaxes_happened( fakes )
-    fakes.each      { |fake| fake.delete if Grapher.number_of_hoaxes_in_month( fakes, fake.date.year, fake.date.month ) < 3 }
-    fakes.collect   { |fake| Grapher.year_month( fake.date.year, fake.date.month ) }
+    arr = fakes.select { |fake| Grapher.number_of_hoaxes_in_month( fakes, fake.date.year, fake.date.month ) > 2 }.compact
+    ids = arr.collect { |item| item.id }
+    fakes.select { |fake| ids.include? fake.id }
   end
 
-  def Grapher.all_year_months # All the recent months excluding the present one in which > 2 hoax happened
+  def Grapher.all_year_months # All the recent months excluding the present one in which > 2 hoaxes happened
     fakes = Fake.order( :date )
-    fakes.each { |fake| fake.delete if fake.date.nil? }
     active_year_months = Grapher.all_year_months_in_which_more_than_two_hoaxes_happened fakes
     array = []
     last = fakes.last
