@@ -27,8 +27,8 @@ RSpec.configure do |config|
 end
 
 def timed_text_expect( page )
-  if Time.now < Date.new(2025, 11, 15) # See application.html.haml
-    expect(page).to have_text("Improvements to site - 'Join' sends confimation email, 'Contact' works, 'show password', improved layout, and many others")
+  if Time.now < Date.new(2025, 12, 31) # See application.html.haml
+    expect(page).to have_text("Improvements to site - 'Join' sends confimation email, 'Contact' works, 'show password', improved CSS, and old reports have been restored")
   else
     expect(page).to have_text('fake hate crimes: a database of hate crime hoaxes')
   end
