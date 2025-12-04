@@ -17,8 +17,8 @@
     .container-fluid
       .row
         .col-xs-12
-          - message = "Improvements to site - 'Join' sends confimation email, 'Contact' works, 'show password', improved layout, and many others"
-          - notice = ((Time.now < Date.new(2025, 11, 15)) and flash[ :notice ].to_s.strip.empty?) ? message : flash[:notice] 
+          - message = "Improvements to site - 'Join' sends confimation email, 'Contact' works, 'show password', improved CSS, and old reports have been restored"
+          - notice = ((Time.now < Date.new(2025, 12, 31)) and flash[ :notice ].to_s.strip.empty?) ? message : flash[:notice] 
           = raw( modern_flash_format( notice ) )
           #nav
             - if current_user
