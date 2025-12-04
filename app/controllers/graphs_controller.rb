@@ -4,7 +4,7 @@ class GraphsController < ApplicationController
     years = Grapher.years
     months_keys, months_data = Grapher.months
     @years_chart = chart( 'Reports of hate crime hoaxes by year', years.keys, years.values )
-    @months_chart = chart( 'Recent months with more than two hate crime hoax reports', months_keys, months_data, 'green' )
+    @months_chart = chart( 'Recent months', months_keys, months_data, 'green' )
   end
 
  private
