@@ -33,4 +33,4 @@ Fakehatecrimes::Application.configure do
   config.eager_load = false
 end
 EMAIL_ADDRESS='xyz@sefsdffjdjd.com'
-WORDS = ['cheese']
+WORDS = ['xyzabc']

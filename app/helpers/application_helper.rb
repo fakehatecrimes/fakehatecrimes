@@ -177,7 +177,7 @@ def flash_errs( model )
 end
 
 def word_link
-  "/images/word#{rand(10).to_s.upcase}.jpg"
+  "/images/word#{rand(16).to_s(16).upcase}.jpg"
 end
 
 FLASH_SPAN = '<span style="color: #F94909; font-size: 15px;">' unless defined? FLASH_SPAN

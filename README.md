@@ -2,51 +2,76 @@
 
 This is a project to create a database of hate crime hoaxes. It builds on the work of Laird Wilcox, whose 'Crying Wolf' is the only book dedicated to this subject so far. It is hosted at [fakehatecrimes.org](http://fakehatecrimes.org).
 
-You will need to run `bundle install`
+### Running in Docker (recommended for Mac M-series and other non-Linux platforms)
 
-If you cannot install Bundler 1.17.3 on your computer, you will need to run it in [Docker](https://www.docker.com), using 
+The app runs on Ruby 2.3.8 / Rails 4.2 / MariaDB 10.1. On modern hardware the easiest path is Docker.
 
-`docker-setup.sh ; docker-start.sh`
+**First-time setup:**
 
-To initialize the database, log into the MySQL command program as root
+```
+./docker-setup.sh
+./docker-db-import.sh
+```
 
-`$ mysql -u root -p`
+**Start the app:**
 
-then
+```
+./docker-start.sh
+```
 
-`create database fakehatecrimesdevelopment;`
-`use fakehatecrimesdevelopment;`
+This drops you into a shell inside the web container. Start the server:
 
-`GRANT ALL PRIVILEGES ON fakehatecrimesdevelopment TO 'root'@'localhost';`
-`GRANT ALL PRIVILEGES ON fakehatecrimesdevelopment.* TO 'root'@'localhost';`
+```
+./docker-rails-3003.sh
+```
 
-and
+or manually:
 
-`source ./db/database.sql.txt`
+```
+rails server -b 0.0.0.0 -p 3003
+```
 
-Then do the same with database `fakehatecrimestest`
+The app is then available at [http://localhost:3003/](http://localhost:3003/).
 
-If you are using Docker, you have to run
+**Set the administrator password** (first time only). In a second terminal, open a shell in the running container:
 
-`docker-db-import.sh ; docker-db-shell.sh`
+```
+docker-compose exec web bash
+```
 
-You need to do this before running the tests: `rake spec`
+Then in the Rails console:
 
-You will then need to save a password for the administrator. Do this using `rails console` 
+```
+rails console
+user = User.first
+user.password = "Helloworld42"
+user.password_confirmation = "Helloworld42"
+user.secret_word = "xyzabc"
+user.save!
+```
 
-`user=User.first ; user.password="Helloworld42" ; user.password_confirmation="Helloworld42" ; user.secret_word="cheese" ; user.save!`
+### CAPTCHA / secret word
 
-You can now run `rails server`
+The registration form shows a CAPTCHA image and asks you to type what you see.
 
-Note that whenever you have to fill in a captcha word in development, you should always enter 'cheese'
+- **In development and test** the answer is always `xyzabc` regardless of what the image shows.
+- **In production** the real CAPTCHA images (stored in `tmp/words/`, not committed to git) are copied to `public/images/` on the server. The accepted words are the 16 words shown in those images (case-insensitive). Anyone reading this repo on GitHub only sees placeholder images and cannot determine the valid words.
 
-Visit [http://localhost:3000/](http://localhost:3000/), click on 'Join', and fill in the form. 
+The images are named `word0.jpg` – `wordF.jpg` (hexadecimal), and one is chosen at random each time the registration page loads.
 
-Look in log/development.log for something like this: http://fakehatecrimes.org/users/confirm?token=ABC123
+### Confirmation email
 
-Go to [http://localhost:3000/users/confirm?token=ABC123](http://localhost:3000/users/confirm?token=ABC123)
+After registering, users receive a confirmation email and must click the link before they can log in. In development, email is not delivered; instead look in `log/development.log` for a line like:
 
-Log in as the new user, and carry out the following tests:
+```
+UserMailer: confirmation_email: @url http://localhost:3003/users/confirm?token=ABC123
+```
+
+Visit that URL directly in your browser to confirm the account.
+
+Users who registered before the email-confirmation feature was added (i.e. who have no confirmation token and no confirmed date) are treated as already confirmed and can log in normally.
+
+Log in as the new user and carry out the following tests:
 
 Click on 'Add New Report'
 

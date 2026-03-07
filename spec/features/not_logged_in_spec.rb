@@ -90,7 +90,7 @@ RSpec.feature 'Front page', type: :feature do
     fill_in 'recipient', with: EMAIL_ADDRESS
     fill_in 'subject', with: 'A message'
     fill_in 'message', with: 'Hello'
-    fill_in 'secret_word', with: 'cheese'
+    fill_in 'secret_word', with: 'xyzabc'
     click_on 'Send email'
     expect(page).to have_text( 'Message sent' )
   end
