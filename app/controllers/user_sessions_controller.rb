@@ -12,7 +12,8 @@ class UserSessionsController < ApplicationController
     if @user_session.save
       redirect_to "/"
     else
-      redirect_to login_path, notice: flash[:notice]
+      error_msg = @user_session.errors.full_messages.join('; ')
+      redirect_to login_path, notice: error_msg
     end
   end
 

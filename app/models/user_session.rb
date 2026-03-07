@@ -5,8 +5,10 @@ class UserSession < Authlogic::Session::Base
 
  private
   def must_be_confirmed
-    if attempted_record && !attempted_record.confirmed?
-      errors.add(:base, "You must confirm your account before logging in.")
+    # Authlogic's magic_states already calls User#confirmed? automatically.
+    # This validator just improves the error message when confirmation is pending.
+    if attempted_record && !attempted_record.confirmed? && attempted_record.confirmation_token.present?
+      errors.add(:base, "Please confirm your email before logging in — check your inbox and spam folder.")
     end
   end
 end

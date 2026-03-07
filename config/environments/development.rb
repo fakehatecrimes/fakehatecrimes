@@ -30,4 +30,4 @@ Fakehatecrimes::Application.configure do
   routes.default_url_options[:host] = "localhost:3000"
 end
 EMAIL_ADDRESS='xyz@sefsdffjdjd.com'
-WORDS = ['cheese']
+WORDS = ['xyzabc']

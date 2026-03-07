@@ -203,8 +203,8 @@ class Medium < ActiveRecord::Base
   end
 
   def empty? # For saving a suspected fake without a medium
-    return true if self.title.blank? and self.body.blank? and self.url.blank? and self.retrieval_date.blank? and self.publication_date.blank?
-    false
+    # Dates may be auto-populated by JS, so only count intentional fields
+    self.title.blank? and self.body.blank? and self.url.blank?
   end
 
   def create_picture
@@ -257,7 +257,8 @@ class Medium < ActiveRecord::Base
   end
 
   def Medium.any_medium_fields_set?( hash ) # See fakes controller
-    hash['title'].present? || hash['retrieval_date'].present?
+    # Only consider intentionally-filled fields, not auto-populated date fields
+    hash['title'].present? || hash['body'].present? || hash['url'].present?
   end
 
   def Medium.list( fake ) # Used in new and edit forms to put included media at the top

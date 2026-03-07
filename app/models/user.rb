@@ -30,6 +30,9 @@ class User < ActiveRecord::Base
   attr_accessor :secret_word
 
   def confirmed?
+    # Legacy users (registered before email confirmation was added) have both
+    # confirmation_token and confirmed_at as nil. Treat them as confirmed.
+    return true if confirmed_at.nil? && confirmation_token.nil?
     confirmed_at.present?
   end
 
