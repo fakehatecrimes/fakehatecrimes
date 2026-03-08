@@ -135,7 +135,12 @@ class FakesController < ApplicationController
 
     if fake.valid?
       if suspected?( args )
-        medium.save
+        unless medium.save
+          medium_errors = medium.errors.full_messages.join('; ')
+          notice = 'Report not saved: article/program not valid - ' + medium_errors
+          flash[:notice] = notice
+          return notice
+        end
       else
         unless medium.save
           fake.errors.add( :media, " - a report of a fake must have at least one tv, radio, print or online reference unless it's merely '#{SUSPECTED}'" )
