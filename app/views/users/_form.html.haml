@@ -17,6 +17,7 @@
       %input#toggle_old_password{ type: "checkbox" }
       %label{ for: "toggle_old_password" } Show password
   .field
+    %p.password-rules= 'Password must contain at least one uppercase letter, one lowercase letter, and one number. Only letters, numbers, and punctuation (!@#$%^&*()_+-=<>.{}[]|,;:? ) are allowed.'
     = f.label :password
     %br
     = f.password_field :password, id: "user_password"
