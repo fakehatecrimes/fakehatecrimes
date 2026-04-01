@@ -1,0 +1,58 @@
+- if @user_session
+  = form_for(@user_session) do |f|
+    - if @user_session.errors.any?
+      #error_explanation
+    .field
+      = f.label :email
+      %br
+      = f.text_field :email
+    .field
+      - if what == 'edit'
+        = f.label :new_password
+        %br
+      - else
+        = f.label :password
+        %br
+      = f.password_field :password, id: "user_session_password"
+      %input#toggle_user_session_password{ type: "checkbox" }
+      %label{ for: "toggle_user_session_password" } Show password
+      %br
+      %br
+    - unless what == 'new'
+      .field
+        = f.label "Password again"
+        = f.password_field :password_confirmation, id: "user_session_password_confirmation"
+        %input#toggle_user_session_password_confirmation{ type: "checkbox" }
+        %label{ for: "toggle_user_session_password_confirmation" } Show password
+      .field
+        %br
+        %img{src: word_link}/
+        %p
+          %label{for: "secret_word"} Enter the letters and numbers in the picture (case insensitive)
+          %br
+          = f.text_field :secret_word
+    .actions
+      %br
+      = f.submit CLICK_HERE
+      %br
+    %br
+
+  - unless Rails.env.test?
+    :javascript
+      document.addEventListener("DOMContentLoaded", () => {
+        const toggle_password = document.getElementById("toggle_user_session_password");
+        const password_field = document.getElementById("user_session_password");
+        if (toggle_password && password_field) {
+          toggle_password.addEventListener("change", () => {
+            password_field.type = toggle_password.checked ? "text" : "password";
+          });
+        }
+
+        const toggle_confirmation = document.getElementById("toggle_user_session_password_confirmation");
+        const confirmation_field = document.getElementById("user_session_password_confirmation");
+        if (toggle_confirmation && confirmation_field) {
+          toggle_confirmation.addEventListener("change", () => {
+            confirmation_field.type = toggle_confirmation.checked ? "text" : "password";
+          });
+        }
+      });

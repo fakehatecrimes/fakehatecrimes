@@ -1,0 +1,18 @@
+- if current_user and current_user.admin?
+  %h3 Users
+  %table
+    %tr
+      %th
+      %th
+      %th
+  - @users.each do |user|
+    %tr
+      %td= user.email
+      %td= link_to 'edit user', edit_user_path(user)
+      %td
+        - if (not user.admin?)
+          = button_to "delete user", { action: "destroy", id: user.id }, |
+            confirm: "Are you sure?", method: :delete                    |
+  %br
+  = link_to 'New user', new_user_path
+  %br

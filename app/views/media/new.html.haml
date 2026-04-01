@@ -1,0 +1,68 @@
+%form{action: "/media", method: "post"}
+  = hidden_field_tag('user_id', (current_user ? current_user.id : nil))
+  = hidden_field_tag('authenticity_token', form_authenticity_token)
+
+  %table.medium
+    %tr
+      %th
+      %th
+    %tr
+      %td{align: "left", valign: "top"}
+        %b Choose from the following
+        %br
+        - Article.all.each do |s|
+          - str = s.get "name"
+          - if str =~ /online/i
+            =radio_button_tag "article_id", s.get( :id ), true
+            =label_tag str
+          - else
+            =radio_button_tag "article_id", s.get( :id ), false
+            =label_tag str
+          %br
+        %br
+        %b Title or name of article or program
+        %br
+        = text_field_tag "medium[title]", @medium.get(:title), max_length: TEXT_FIELD_SIZE
+        %br
+        %br
+        Name of publication or program
+        %br
+        = text_field_tag "medium[name]", @medium.get(:name), max_length: TEXT_FIELD_SIZE
+        %br
+        %br
+        Authors
+        %br
+        = text_field_tag "medium[authors]", @medium.get(:authors), max_length: TEXT_FIELD_SIZE
+        %br
+        %br
+        URL of online article (copy and paste line
+        %br
+        beginning with 'http' from browser)
+        %br
+        = text_field_tag "medium[url]", @medium.get(:url), max_length: URL_SIZE
+      %td{align: "left", valign: "top"}
+        Summary of content
+        %br
+        = text_area_tag "medium[body]", @medium.get(:body), cols: 25, rows: 20
+    %tr
+      %td{align: "left", valign: "top"}
+        %br
+        The day you read the article, or saw or heard
+        %br
+        the program
+        %small.text-muted (required)
+        %br
+        %input{type: "date", name: "retrieval_date", value: (@medium.retrieval_date.present? ? (@medium.retrieval_date.is_a?(String) ? @medium.retrieval_date : @medium.retrieval_date.strftime('%Y-%m-%d')) : ''), class: 'form-control'}
+      %td{align: "left", valign: "top"}
+        %br
+        The day the article was first published
+        %br
+        or broadcast
+        %small.text-muted (required)
+        %br
+        %input{type: "date", name: "publication_date", value: (@medium.publication_date.present? ? (@medium.publication_date.is_a?(String) ? @medium.publication_date : @medium.publication_date.strftime('%Y-%m-%d')) : ''), class: 'form-control'}
+
+  %br
+  .text-center.mt-20
+    %input{type: "submit", name: "commit", value: SAVE_MEDIUM_BUTTON, class: "btn btn-success btn-lg"}
+  %br

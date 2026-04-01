@@ -1,0 +1,23 @@
+%div{style: "margin-left: 10px; margin-right: 7px;"}
+  %br
+  %h3 Send message to fakehatecrimes.org
+  = form_tag('/sendmail') do
+    %p
+      %label{for: "email_recipient"} Your email address
+      = text_field_tag 'recipient', '', size: 70
+    %p
+      %label{for: "email_subject"} Subject
+      = text_field_tag 'subject', '', size: 85
+    %p
+      %label{for: "email_message"} Message
+      %br
+      = text_area_tag 'message', '', {size: "40x10"}
+    %img{src: word_link}/
+    %p
+      %label{for: "secret_word"} Enter the letters and numbers in the picture (case insensitive)
+      %br
+      = text_field_tag :secret_word
+    = submit_tag "Send email"
+    %br
+    %br
+%br

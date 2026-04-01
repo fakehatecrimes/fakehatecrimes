@@ -1,0 +1,188 @@
+Gemfile
+source 'https://rubygems.org'
+
+ruby '2.3.8'
+
+gem 'rails', '4.2.11.3'
+gem 'mysql2', '~> 0.4.10'
+gem 'authlogic', '3.6.0'
+gem 'puma', '~> 3.11'
+gem 'sass-rails', '~> 4.0'
+gem 'uglifier', '>= 1.3.0'
+gem 'coffee-rails', '~> 4.2.2'
+gem 'concurrent-ruby', '1.3.5'
+gem 'loofah', '~> 2.2.3'
+gem 'rails-html-sanitizer', '~> 1.0.4'
+gem 'rspec-rails', '3.8.2'
+gem 'factory_bot', '4.11.1'
+gem 'capybara', '2.4.0'
+gem 'haml', '5.0.4'
+gem 'haml-rails', '1.0.0'
+gem 'jquery-rails', '3.1.5'
+gem 'lazy_high_charts', '1.5.8'
+gem 'will_paginate', '3.1.7'
+
+group :development, :test do
+  gem 'sqlite3', '~> 1.3.6'
+  gem 'byebug'
+end
+
+Dockerfile
+source 'https://rubygems.org'
+
+ruby '2.3.8'
+
+gem 'rails', '4.2.11.3'
+gem 'mysql2', '~> 0.4.10'
+gem 'authlogic', '3.6.0'
+gem 'puma', '~> 3.11'
+gem 'sass-rails', '~> 4.0'
+gem 'uglifier', '>= 1.3.0'
+gem 'coffee-rails', '~> 4.2.2'
+gem 'concurrent-ruby', '1.3.5'
+gem 'loofah', '~> 2.2.3'
+gem 'rails-html-sanitizer', '~> 1.0.4'
+gem 'rspec-rails', '3.8.2'
+gem 'factory_bot', '4.11.1'
+gem 'capybara', '2.4.0'
+gem 'haml', '5.0.4'
+gem 'haml-rails', '1.0.0'
+gem 'jquery-rails', '3.1.5'
+gem 'lazy_high_charts', '1.5.8'
+gem 'will_paginate', '3.1.7'
+
+group :development, :test do
+  gem 'sqlite3', '~> 1.3.6'
+  gem 'byebug'
+end
+
+docker-compose.yml 
+services:
+  db:
+    image: mariadb:10.1
+    platform: linux/amd64
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: myapp_development
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle _1.17.3_ exec rails server -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+      - "3001:3001" 
+      - "3002:3002"
+      - "3003:3003"
+      - "3004:3004"
+      - "3005:3005"
+      - "3006:3006"
+      - "3007:3007"
+      - "3008:3008"
+      - "3009:3009"
+    depends_on:
+      - db
+    working_dir: /app
+
+volumes:
+  db-data:
+
+docker-db-import.sh
+#!/bin/bash
+set -e
+
+echo "📥 Creating databases if they don't exist..."
+docker exec -i fakehatecrimes-db-1 mysql -u root -e "CREATE DATABASE IF NOT EXISTS fakehatecrimesdevelopment;"
+docker exec -i fakehatecrimes-db-1 mysql -u root -e "CREATE DATABASE IF NOT EXISTS fakehatecrimestest;"
+
+echo "📥 Importing schema/data into databases..."
+docker exec -i fakehatecrimes-db-1 mysql -u root fakehatecrimesdevelopment < db/database.sql.txt
+docker exec -i fakehatecrimes-db-1 mysql -u root fakehatecrimestest < db/database.sql.txt
+echo "✅ Import complete."
+
+docker-db-shell.sh
+#!/bin/bash
+set -e
+echo "🐚 Opening MySQL shell inside the db container..."
+docker-compose exec db mysql -u root
+
+docker-setup-sh
+#!/bin/bash
+set -e  # Exit immediately if a command fails
+
+echo "🛠 Cleaning up old containers and volumes..."
+docker-compose down --volumes
+
+# Ensure Gemfile.lock exists
+rm -f Gemfile.lock
+touch Gemfile.lock
+
+echo "📦 Building images from scratch..."
+docker-compose build --no-cache
+
+# Ensure Gemfile.lock inside container
+docker-compose run --rm web bash -c "touch Gemfile.lock"
+
+echo "💎 Installing gems with Bundler 1.17.3..."
+docker-compose run --rm web bundle _1.17.3_ install
+
+echo "🗄 Creating database..."
+docker-compose run --rm web rake db:create
+
+echo "✅ Setup complete. Run ./docker-start.sh to launch your app."
+
+docker-start.sh
+#!/bin/bash
+set -e
+echo "In one of the bash shells with the prompt root@AHEXNUMBER:/app# enter rails server -b 0.0.0.0 -p 3000"
+
+echo "🚀 Starting containers..."
+docker-compose up -d
+
+echo "🐚 Attaching to web container shell..."
+docker-compose exec web bash
+
+
+Since your production box is running Ubuntu 16.04.7 LTS (Xenial), which is a different environment than your Docker setup, you'll need to handle the PhantomJS issue differently. Let me help you set up the production environment properly.
+Check production server architecture and PhantomJS compatibility
+Install PhantomJS on Ubuntu 16.04 production server
+Configure environment variables for production
+Test screenshot functionality in production
+For production deployment on Ubuntu 16.04.7 LTS, you have several options depending on your production server's architecture. Let me provide you with the steps:
+Step 1: Check Your Production Server Architecture
+First, let's determine what architecture your production server is running:
+This will tell us if it's:
+x86_64 (Intel/AMD 64-bit) - PhantomJS should work fine
+aarch64 (ARM 64-bit) - Will need the same workaround as Docker
+armv7l (ARM 32-bit) - Will need a different approach
+Step 2: Install PhantomJS on Ubuntu 16.04
+Option A: If your server is x86_64 (most likely):
+Option B: If your server is ARM64 (aarch64):
+Step 3: Set Environment Variables
+Add these to your production environment (in your deployment script, systemd service, or .bashrc):
+Step 4: Update Your Application Code
+The code changes we made to ApplicationController will work in production too, but let me create a production-specific version that's more robust:
+Step 5: Production Deployment Script
+Create a deployment script for your production server:
+Step 6: Test in Production
+After deployment, test the functionality:
+Step 7: Monitor Production Logs
+The updated code now uses Rails.logger.info instead of puts, so you'll see the messages in your production logs (typically in log/production.log).
+Check production server architecture and PhantomJS compatibility
+Install PhantomJS on Ubuntu 16.04 production server
+Configure environment variables for production
+Test screenshot functionality in production
+Summary
+For production deployment on Ubuntu 16.04.7 LTS, you need to:
+Check your server architecture with uname -m
+Install PhantomJS (real or dummy based on architecture)
+Set environment variables (PHANTOMJS_BIN and PHANTOMJS_PATH)
+Deploy your updated code (with the architecture detection)
+Test the functionality in production
+The solution will work on both x86_64 (with real PhantomJS) and ARM64 (with graceful degradation) architectures, ensuring your Rails application works reliably in production regardless of the server architecture.
